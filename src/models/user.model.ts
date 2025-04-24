@@ -1,24 +1,90 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Model, DataTypes } from 'sequelize';
+import { database } from '../config/database';
 
-@Table({
-  tableName: 'users',
-  timestamps: true,
-})
-class User extends Model {
-  @Column({
-    type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  id!: number;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  email!: string;
-
-  // Add other columns here
+export enum role {
+    ADMIN = "admin",
+    USER = "user",
 }
 
-export default User;
+export interface UserAttributes {
+    id: string;
+    userName?: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    password?: string;
+    address?: string;
+    role?: string;
+    telephone?: string;
+    // email_verified_at?: Date | null;
+}
+
+export class User extends Model<UserAttributes> {
+    [x:string] : any
+}
+
+User.init(
+
+{
+    id: {
+        type:DataTypes.UUID,
+        primaryKey: true,
+        allowNull: false
+    }, 
+    firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    lastName: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    userName: {
+        type: DataTypes.STRING,
+        allowNull:false,
+        unique: true,
+
+    },
+    role:{
+      type: DataTypes.ENUM(...Object.values(role)),
+      allowNull: false,
+      defaultValue: "user",
+    },
+    email:{
+        type:DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    password:{
+        type:DataTypes.STRING,
+        allowNull: false
+    },
+     telephone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+      unique: true,
+    },
+    address:{
+        type:DataTypes.STRING,
+        allowNull: false,
+        unique:true,
+    },
+    // email_verified_at:{
+    //     type:DataTypes.STRING,
+    //     allowNull: false,
+    //     defaultValue: null,
+    // }, 
+},
+{
+    sequelize: database,
+    tableName: "User",
+    timestamps: true,
+}
+
+);
+
+export default User
+
+
