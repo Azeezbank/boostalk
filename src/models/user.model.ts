@@ -1,22 +1,24 @@
+// database user model
 import { Model, DataTypes } from 'sequelize';
-import { database } from '../config/database';
+import  database  from '../config/database';
 
 
-export enum role {
+export enum Role {
     ADMIN = "admin",
     USER = "user",
 }
 
 export interface UserAttributes {
     id: string;
-    userName?: string;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    password?: string;
+    Username?: string;
+    Email?: string;
+    FullName?: string;
+    Password?: string;
     address?: string;
-    role?: string;
-    telephone?: string;
+    Role?: string;
+    Phone?: string;
+    verificationCode: string;
+    isVerified: boolean
     // email_verified_at?: Date | null;
 }
 
@@ -32,50 +34,42 @@ User.init(
         primaryKey: true,
         allowNull: false
     }, 
-    firstName: {
+    FullName: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    lastName: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    userName: {
+    Username: {
         type: DataTypes.STRING,
         allowNull:false,
         unique: true,
 
     },
-    role:{
-      type: DataTypes.ENUM(...Object.values(role)),
+    Phone: {
+        type:DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    Role: {
+      type: DataTypes.ENUM(...Object.values(Role)),
       allowNull: false,
       defaultValue: "user",
     },
-    email:{
+    Email:{
         type:DataTypes.STRING,
         allowNull: false,
         unique: true,
     },
-    password:{
+    Password:{
         type:DataTypes.STRING,
         allowNull: false
     },
-     telephone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: null,
-      unique: true,
-    },
-    address:{
-        type:DataTypes.STRING,
-        allowNull: false,
-        unique:true,
-    },
-    // email_verified_at:{
-    //     type:DataTypes.STRING,
-    //     allowNull: false,
-    //     defaultValue: null,
-    // }, 
+    verificationCode: {
+    type: DataTypes.STRING,
+  },
+  isVerified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  }
 },
 {
     sequelize: database,
@@ -85,6 +79,4 @@ User.init(
 
 );
 
-export default User
-
-
+export default User;

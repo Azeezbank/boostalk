@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './docs/swagger.json';
+import authRoutes from './middlewares/Auth.js';
 
 
 const app = express();
@@ -16,9 +17,12 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Example test route
-app.get('/', (_req:any, res: any) => {
-  res.send('API is running...');
-});
+// // Example test route
+// app.get('/', (_req:any, res: any) => {
+//   res.send('API is running...');
+// });
+
+// Route for authentication
+app.use("/api/auth", authRoutes);
 
 export default app;
