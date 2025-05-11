@@ -18,7 +18,7 @@ export interface UserAttributes {
     Role?: string;
     Phone?: string;
     verificationCode: string;
-    isVerified: boolean
+    isVerified: boolean;
     // email_verified_at?: Date | null;
 }
 
