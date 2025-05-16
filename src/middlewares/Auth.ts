@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import transporter from '../utils/mailer.js';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import JWT from 'jsonwebtoken';
+import { Op } from 'sequelize';
 
 const router = express.Router();
 
@@ -69,6 +71,38 @@ router.post("/verify", async (req: any, res: any) => {
   }
 });
 
+//Middleware to protect route
+const authentication = (req: any, res: any, next: any) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Expecting: Bearer <token>
+  if (!token) return res.status(403).json({ message: 'Token is missing' });
+
+  JWT.verify(token, process.env.SECRET_KEY as string, (err: any, user: any) => {
+    if (err) return res.status(401).json({ message: 'Token is invalid' });
+
+    req.user = user; // store decoded user info
+    next();
+});
+};
+// Sign in user
+router.post("/login", async (req: any, res: any) => {
+  const { Email, Password } = req.body;
+  try {
+    const user = await User.findOne({where: { [Op.or]: [{Email:  Email}, {Username: Email}]}});
+    if (!user) return res.status(404).json({message: 'User Not Found'});
+
+    const isPasswordMatch = await bcrypt.compare(Password, user.Password);
+    if (!isPasswordMatch) return res.status(200).json({message: 'Incorrect password'});
+
+     const token = JWT.sign({id: user.id}, process.env.SECRET_KEY as string, {expiresIn: '1d'});
+     console.log('Succes');
+     res.json({ token });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message})
+  }
+});
+
+
 // forgot passwork email verification
 router.post("/forgot/password", async (req: any, res: any) => {
   const { Email } = req.body;
@@ -76,7 +110,7 @@ router.post("/forgot/password", async (req: any, res: any) => {
     const user = await User.findOne({ where: { Email }});
     if (!user) return res.status(400).json({message: 'Inavlid Emaill Address'});
 
-    const OTP = Math.floor(1000 + Math.random() * 9000).toString(); //Generate $ digit otp
+    const OTP = Math.floor(1000 + Math.random() * 9000).toString(); //Generate 4 digit otp
     //Send Mail to the user
       await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -96,43 +130,40 @@ router.post("/forgot/password", async (req: any, res: any) => {
 
 //Update password
 router.post("/forgot/password/verify", async (req: any, res: any) => {
-  const { forgotPasswordVerificationCode } = req.body;
+  const { newPasswordOTP } = req.body;
   try {
-  const user = await User.findOne({ where: {verificationCode: forgotPasswordVerificationCode}});
-  if (!user || user.verificationCode !== forgotPasswordVerificationCode) {
+  const user = await User.findOne({ where: {verificationCode: newPasswordOTP}});
+  if (!user || user.verificationCode !== newPasswordOTP) {
     return res.status(404).json({message: 'No User Found'});
   }
-
-  // get user mail address
-  const email = user.Email;
-
-  //get username
-  const username = user.Username;
-
-  // Reset user password to boostalk default password
-  const randomPassword = (length = 12) => {
-    return crypto.randomBytes(length).toString('base64').slice(0, length);
-  };
-  const password = randomPassword();
-  const hashedDefaultPassword = await bcrypt.hash(password, 10);
-
-  // Send password to user
-  await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Password Recovery",
-      html: `<p>Dear ${username} your password is <b>${password} please keep it safely, if you didn't initiate this please reset your password</b></p>`,
-    });
-
-    user.Password = hashedDefaultPassword;
-    user.verificationCode = null;
-    await user.save();
-
-    res.status(200).json({message: 'Password Sent Successfully'})
-  } catch (err: any) {
-    return res.status(500).json({message: err.message})
-  }
+  res.status(200).json({ message: 'Succesful, process to set new password'});
+} catch (err: any) {
+  return res.status(500).json({message: err.message})
+}
 });
 
+router.post("/set/newPassword", async (req: any, res: any) => {
+  const { Username, newPassword, confirmPassword } = req.body;
+  try {
+    const user = await User.findOne({where: {Username}});
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (newPassword !== confirmPassword) {
+      console.log('Password Mismmatch, Input same Password');
+      return res.status(400).json({message: 'Password Mismmatch, Input same Password'});
+    }
+
+    const hashNewPassword = await bcrypt.hash(confirmPassword, 10);
+    user.Password = hashNewPassword;
+    await user.save();
+    res.status(200).json({message: 'Password updated successfully'});
+  } catch (err: any) {
+    console.error(err.message);
+    return res.status(500).json({message: 'Unable to update password'})
+  }
+});
 
 export default router;

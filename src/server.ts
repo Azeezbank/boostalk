@@ -9,7 +9,7 @@ async function start() {
      console.log('Database connected ✅');
 
     // await sequelize.sync({ alter: true }); // Or use { force: true } in dev
-    await database.sync({force: true});
+    await database.sync({ alter: true });
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
