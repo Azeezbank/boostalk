@@ -15,6 +15,74 @@ dotenv.config();
 const userId = uuidv4();
 
 
+/**
+ * @swagger
+ * /register:
+ *   post:
+ *     summary: Register a new user
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - FullName
+ *               - Username
+ *               - Phone
+ *               - Email
+ *               - Password
+ *             properties:
+ *               FullName:
+ *                 type: string
+ *                 example: Boostalk Media
+ *               Username:
+ *                 type: string
+ *                 example: Boostalk001
+ *               Phone:
+ *                 type: string
+ *                 example: +2348012345678
+ *               Email:
+ *                 type: string
+ *                 example: boostalk@example.com
+ *               Password:
+ *                 type: string
+ *                 format: password
+ *                 example: strongpassword123
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User registered. Verification code sent to email.
+ *       400:
+ *         description: Email already registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email already registered.
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
 // Register Route
 router.post("/register", async (req: any, res: any) => {
   const {FullName, Username, Phone, Email, Password } = req.body;
@@ -110,59 +178,80 @@ router.post("/forgot/password", async (req: any, res: any) => {
     const user = await User.findOne({ where: { Email }});
     if (!user) return res.status(400).json({message: 'Inavlid Emaill Address'});
 
-    const OTP = Math.floor(1000 + Math.random() * 9000).toString(); //Generate 4 digit otp
-    //Send Mail to the user
+    const token = JWT.sign({id: user.id}, process.env.SECRET_KEY!, {expiresIn: '15m'});
+    const passwordResetLink = `https://boostalk.com/reset/password?token=${token}`;
+
+    //Send password rest link to the user
       await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: Email,
-      subject: "Verify your email",
-      html: `<p>Your verification code is <b>${OTP} for password reset</b></p>`,
+      subject: "Password Reset Link",
+      html: `
+      <p>Click the link below to reset your password:</p>
+        <a href="${passwordResetLink}" target="_blank"><b>${passwordResetLink}</b></a>
+        <p>This link will expire in 15 minutes.</p>
+      `,
     });
-
-    user.verificationCode = OTP;
-    await user.save();
-
-    res.status(200).json({ message: 'Verification OTP Sent Successfully'})
+    res.status(200).json({ message: 'Password Reset Link Sent Successfully'})
   } catch (err: any) {
     return res.status(500).json({message: err.message})
   }
 });
 
 //Update password
-router.post("/forgot/password/verify", async (req: any, res: any) => {
-  const { newPasswordOTP } = req.body;
+router.post("/reset/password", async (req: any, res: any) => {
+  const token = req.query.token;
+  const { newPassword, confirmPassword } = req.body;
+  if (newPassword !== confirmPassword) {
+      console.log('PasswordMismatch, Please input same password');
+      return res.status(400).json({message: 'PasswordMismatch, Please input same password'});
+    }
   try {
-  const user = await User.findOne({ where: {verificationCode: newPasswordOTP}});
-  if (!user || user.verificationCode !== newPasswordOTP) {
-    return res.status(404).json({message: 'No User Found'});
-  }
-  res.status(200).json({ message: 'Succesful, process to set new password'});
+    const decoded: any = JWT.verify(token, process.env.SECRET_KEY!);
+    const user = await User.findByPk(decoded.id);
+
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).json({message: 'User not found'})
+    }
+
+    const hashedPassword = await bcrypt.hash(confirmPassword, 10);
+    user.Password = hashedPassword;
+
+    await user.save();
+
+    res.status(200).json({message: 'Password Updated'});
 } catch (err: any) {
+  console.error(err.message)
   return res.status(500).json({message: err.message})
 }
 });
 
-router.post("/set/newPassword", async (req: any, res: any) => {
-  const { Username, newPassword, confirmPassword } = req.body;
+
+// Change user password
+router.post("/change/password", async (req: any, res: any) => {
+  const { oldPassword, newPassword, confirmNewPassword } = req.body;
   try {
-    const user = await User.findOne({where: {Username}});
+    const user = await User.findOne({where: {Password: oldPassword}});
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      console.log('Password Cannot be found, reset your password with forgot password');
+      return res.status(404).json({message: 'Password Cannot be found, reset your password with forgot password'});
     }
 
-    if (newPassword !== confirmPassword) {
-      console.log('Password Mismmatch, Input same Password');
-      return res.status(400).json({message: 'Password Mismmatch, Input same Password'});
+    if (newPassword !== confirmNewPassword) {
+      console.log('Password Mismatch, the new password input same password for both new pass and confirm password field');
+      return res.status(403).json({message: 'Forbiden, Password Mismatch, the new password input same password for both new pass and confirm password field'})
     }
 
-    const hashNewPassword = await bcrypt.hash(confirmPassword, 10);
-    user.Password = hashNewPassword;
+    const hashedPassword = await bcrypt.hash(confirmNewPassword, 10);
+    user.Password = hashedPassword;
     await user.save();
-    res.status(200).json({message: 'Password updated successfully'});
+
+    res.status(200).json({message: 'Password Changed Successfully'});
   } catch (err: any) {
-    console.error(err.message);
-    return res.status(500).json({message: 'Unable to update password'})
+    console.error(err.message)
+    return res.status(500).json({message: err.message})
   }
 });
 

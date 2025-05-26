@@ -3,13 +3,12 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
-import swaggerDocument from './docs/swagger.json';
+import { swaggerSpec } from './docs/Swagger'; 
 import authRoutes from './middlewares/Auth.js';
 
 
 const app = express();
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(helmet());
 app.use(cors());
