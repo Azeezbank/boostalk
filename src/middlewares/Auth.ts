@@ -119,6 +119,40 @@ router.post("/register", async (req: any, res: any) => {
 });
 
 // Verify email for registration Route
+/**
+ * @swagger
+ * /verify:
+ *   post:
+ *     summary: Verify a user's email using a verification code
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               code:
+ *                 type: string
+ *                 example: "a1b2c3"
+ *     responses:
+ *       200:
+ *         description: Account verified successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Account verified successfully.
+ *       400:
+ *         description: Invalid verification code
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.post("/verify", async (req: any, res: any) => {
   const { code } = req.body;
   try {
@@ -152,7 +186,51 @@ const authentication = (req: any, res: any, next: any) => {
     next();
 });
 };
+
 // Sign in user
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Sign in a user using email or username and password
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - Email
+ *               - Password
+ *             properties:
+ *               Email:
+ *                 type: string
+ *                 description: Email or username of the user
+ *                 example: johndoe@example.com
+ *               Password:
+ *                 type: string
+ *                 description: User's password
+ *                 example: password123
+ *     responses:
+ *       200:
+ *         description: Login successful or incorrect password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 message:
+ *                   type: string
+ *                   example: Incorrect password
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.post("/login", async (req: any, res: any) => {
   const { Email, Password } = req.body;
   try {
@@ -172,6 +250,49 @@ router.post("/login", async (req: any, res: any) => {
 
 
 // forgot passwork email verification
+/**
+ * @swagger
+ * /forgot/password:
+ *   post:
+ *     summary: Send a password reset link to the user's email
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - Email
+ *             properties:
+ *               Email:
+ *                 type: string
+ *                 description: User's email address
+ *                 example: johndoe@example.com
+ *     responses:
+ *       200:
+ *         description: Password reset link sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password Reset Link Sent Successfully
+ *       400:
+ *         description: Invalid email address
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid Email Address
+ *       500:
+ *         description: Server error
+ */
 router.post("/forgot/password", async (req: any, res: any) => {
   const { Email } = req.body;
   try {
@@ -199,6 +320,61 @@ router.post("/forgot/password", async (req: any, res: any) => {
 });
 
 //Update password
+/**
+ * @swagger
+ * /reset/password:
+ *   post:
+ *     summary: Reset a user's password using a token
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Password reset token sent to the user's email
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *               - confirmPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 example: NewPassword123!
+ *               confirmPassword:
+ *                 type: string
+ *                 example: NewPassword123!
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password Updated
+ *       400:
+ *         description: Password mismatch or invalid request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: PasswordMismatch, Please input same password
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.post("/reset/password", async (req: any, res: any) => {
   const token = req.query.token;
   const { newPassword, confirmPassword } = req.body;
