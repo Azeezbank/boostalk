@@ -17,7 +17,7 @@ const userId = uuidv4();
 
 /**
  * @swagger
- * /register:
+ * /api/auth/register:
  *   post:
  *     summary: Register a new user
  *     tags:
@@ -121,7 +121,7 @@ router.post("/register", async (req: any, res: any) => {
 // Verify email for registration Route
 /**
  * @swagger
- * /verify:
+ * /api/auth/verify:
  *   post:
  *     summary: Verify a user's email using a verification code
  *     tags: [Auth]
@@ -190,7 +190,7 @@ const authentication = (req: any, res: any, next: any) => {
 // Sign in user
 /**
  * @swagger
- * /login:
+ * /api/auth/login:
  *   post:
  *     summary: Sign in a user using email or username and password
  *     tags: [Auth]
@@ -252,7 +252,7 @@ router.post("/login", async (req: any, res: any) => {
 // forgot passwork email verification
 /**
  * @swagger
- * /forgot/password:
+ * /api/auth/forgot/password:
  *   post:
  *     summary: Send a password reset link to the user's email
  *     tags: [Auth]
@@ -322,7 +322,7 @@ router.post("/forgot/password", async (req: any, res: any) => {
 //Update password
 /**
  * @swagger
- * /reset/password:
+ * /api/auth/reset/password:
  *   post:
  *     summary: Reset a user's password using a token
  *     tags: [Auth]
