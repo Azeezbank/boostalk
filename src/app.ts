@@ -16,10 +16,10 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// // Example test route
-// app.get('/', (_req:any, res: any) => {
-//   res.send('API is running...');
-// });
+ // Example test route
+ app.get('/', (_req:any, res: any) => {
+ res.send('API is running...');
+ });
 
 // Route for authentication
 app.use("/api/auth", authRoutes);
