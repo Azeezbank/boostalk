@@ -7,8 +7,8 @@
     },
     "servers": [
       {
-        "url": "http://localhost:5000",
-        "description": "Local dev"
+        "url": "https://boostalk.onrender.com",
+        "description": "dev"
       }
     ],
     "paths": {
