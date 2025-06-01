@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
  // Example test route
- app.get('/', (_req:any, res: any) => {
+ app.get('/', (req:any, res: any) => {
  res.send('API is running...');
  });
 
