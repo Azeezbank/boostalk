@@ -12,7 +12,6 @@ import { Op } from 'sequelize';
 const router = express.Router();
 
 dotenv.config();
-const userId = uuidv4();
 
 
 /**
@@ -84,8 +83,9 @@ const userId = uuidv4();
  *                   example: Internal server error
  */
 // Register Route
-router.post("https://boostalk.onrender.com/register", async (req: any, res: any) => {
+router.post("/register", async (req: any, res: any) => {
   const {FullName, Username, Phone, Email, Password } = req.body;
+  const userId = uuidv4();
   try {
     const existing = await User.findOne({ where: { Email } });
     if (existing) return res.status(400).json({ message: "Email already registered." });
