@@ -84,7 +84,7 @@ const userId = uuidv4();
  *                   example: Internal server error
  */
 // Register Route
-router.post("/register", async (req: any, res: any) => {
+router.post("https://boostalk.onrender.com/register", async (req: any, res: any) => {
   const {FullName, Username, Phone, Email, Password } = req.body;
   try {
     const existing = await User.findOne({ where: { Email } });
@@ -174,18 +174,18 @@ router.post("/verify", async (req: any, res: any) => {
 });
 
 //Middleware to protect route
-const authentication = (req: any, res: any, next: any) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Expecting: Bearer <token>
-  if (!token) return res.status(403).json({ message: 'Token is missing' });
+// const authentication = (req: any, res: any, next: any) => {
+//   const authHeader = req.headers['authorization'];
+//   const token = authHeader && authHeader.split(' ')[1]; // Expecting: Bearer <token>
+//   if (!token) return res.status(403).json({ message: 'Token is missing' });
 
-  JWT.verify(token, process.env.SECRET_KEY as string, (err: any, user: any) => {
-    if (err) return res.status(401).json({ message: 'Token is invalid' });
+//   JWT.verify(token, process.env.SECRET_KEY as string, (err: any, user: any) => {
+//     if (err) return res.status(401).json({ message: 'Token is invalid' });
 
-    req.user = user; // store decoded user info
-    next();
-});
-};
+//     req.user = user; // store decoded user info
+//     next();
+// });
+// };
 
 // Sign in user
 /**

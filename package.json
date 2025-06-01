@@ -4,13 +4,13 @@
   "main": "dist/server.js",
   "private": true,
   "scripts": {
-    "prepare": "chmod +x node_modules/.bin/tsx",
+     "prepare": "chmod +x node_modules/.bin/tsx",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "docs": "open http://localhost:5000/api-docs"
+    "docs": "open https://boostalk.onrender.com/api-docs"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
