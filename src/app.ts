@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './docs/Swagger'; 
 import authRoutes from './middlewares/Auth.js';
+import users from './controllers/User';
 
 
 const app = express();
@@ -23,5 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Route for authentication
 app.use("/api/auth", authRoutes);
+app.use("/get/all/users", users)
 
 export default app;
