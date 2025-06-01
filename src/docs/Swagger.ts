@@ -11,7 +11,7 @@ export const swaggerOptions: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000', // change to your API base URL
+        url: 'https://boostalk.onrender.com', // change to your API base URL
       },
     ],
   },
