@@ -41,13 +41,11 @@ User.init(
     Username: {
         type: DataTypes.STRING,
         allowNull:false,
-        unique: true,
 
     },
     Phone: {
         type:DataTypes.STRING,
         allowNull: false,
-        unique: true
     },
     Role: {
       type: DataTypes.ENUM(...Object.values(Role)),
@@ -57,7 +55,6 @@ User.init(
     Email:{
         type:DataTypes.STRING,
         allowNull: false,
-        unique: true,
     },
     Password:{
         type:DataTypes.STRING,

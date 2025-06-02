@@ -24,6 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Route for authentication
 app.use("/api/auth", authRoutes);
-app.use("/get/all/users", users)
+app.use("/get/all/users", users);
 
 export default app;
