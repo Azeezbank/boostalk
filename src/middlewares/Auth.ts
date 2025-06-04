@@ -173,19 +173,23 @@ router.post("/verify", async (req: any, res: any) => {
   }
 });
 
-//Middleware to protect route
-// const authentication = (req: any, res: any, next: any) => {
-//   const authHeader = req.headers['authorization'];
-//   const token = authHeader && authHeader.split(' ')[1]; // Expecting: Bearer <token>
-//   if (!token) return res.status(403).json({ message: 'Token is missing' });
+// Middleware to protect route
+const authentication = (req: any, res: any, next: any) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Expecting: Bearer <token>
+  if (!token) return res.status(403).json({ message: 'Token is missing' });
 
-//   JWT.verify(token, process.env.SECRET_KEY as string, (err: any, user: any) => {
-//     if (err) return res.status(401).json({ message: 'Token is invalid' });
+  JWT.verify(token, process.env.SECRET_KEY as string, (err: any, user: any) => {
+    if (err) {
+      console.error('Token is invalid', err)
+      return res.status(401).json({ message: 'Token is invalid' });
+    }
 
-//     req.user = user; // store decoded user info
-//     next();
-// });
-// };
+
+    req.user = user; // store decoded user info
+    next();
+});
+};
 
 // Sign in user
 /**
@@ -240,7 +244,7 @@ router.post("/login", async (req: any, res: any) => {
     const isPasswordMatch = await bcrypt.compare(Password, user.Password);
     if (!isPasswordMatch) return res.status(200).json({message: 'Incorrect password'});
 
-     const token = JWT.sign({id: user.id}, process.env.SECRET_KEY as string, {expiresIn: '1d'});
+     const token = JWT.sign({id: user.id, email: user.Email}, process.env.SECRET_KEY as string, {expiresIn: '1d'});
      console.log('Succes');
      res.json({ token });
   } catch (err: any) {
@@ -404,11 +408,175 @@ router.post("/reset/password", async (req: any, res: any) => {
 });
 
 
-// Change user password
-router.post("/change/password", async (req: any, res: any) => {
-  const { oldPassword, newPassword, confirmNewPassword } = req.body;
+//Change password
+/**
+ * @swagger
+ * /change/password:
+ *   post:
+ *     summary: Send password reset link to user email
+ *     description: Protected route. Requires JWT token in Authorization header.
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - User
+ *     responses:
+ *       200:
+ *         description: Password reset link sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password Reset Link Sent Successfully
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Token is invalid
+ *       403:
+ *         description: Forbidden - Token missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Token is missing
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User Not Found
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+router.post("/change/password", authentication, async (req: any, res: any) => {
+  
+  const userid = req.user.id;
+  const userMail = req.user.Email;
   try {
-    const user = await User.findOne({where: {Password: oldPassword}});
+    const user = await User.findOne({ where: { id: userid }});
+    if (!user) return res.status(404).json({message: 'User Not Found'});
+
+    const token = JWT.sign({id: user.id,}, process.env.SECRET_KEY!, {expiresIn: '15m'});
+    const passwordResetLink = `https://boostalk.com/new/password?token=${token}`;
+
+    //Send password rest link to the user
+      await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: userMail,
+      subject: "Password Reset Link",
+      html: `
+      <p>Click the link below to reset your password:</p>
+        <a href="${passwordResetLink}" target="_blank"><b>${passwordResetLink}</b></a>
+        <p>This link will expire in 15 minutes.</p>
+      `,
+    });
+    res.status(200).json({ message: 'Password Reset Link Sent Successfully'})
+  } catch (err: any) {
+    return res.status(500).json({message: err.message})
+  }
+});
+
+
+// Change user password
+/**
+ * @swagger
+ * /new/password:
+ *   post:
+ *     summary: Change user password
+ *     description: >
+ *       Protected route. User must be authenticated via JWT token.
+ *       After clicking the password reset link sent by email,
+ *       the user will submit new password and confirmation to this endpoint.
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - User
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *               - confirmNewPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 example: newStrongPassword123
+ *               confirmNewPassword:
+ *                 type: string
+ *                 example: newStrongPassword123
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password Changed Successfully
+ *       403:
+ *         description: Password mismatch error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Forbiden, Password Mismatch, the new password input same password for both new pass and confirm password field
+ *       404:
+ *         description: User not found error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password Cannot be found, reset your password with forgot password
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+router.post("/new/password", authentication, async (req: any, res: any) => {
+  const { newPassword, confirmNewPassword } = req.body;
+  const userid = req.user.id;
+  try {
+    const user = await User.findOne({where: { id: userid}});
 
     if (!user) {
       console.log('Password Cannot be found, reset your password with forgot password');
