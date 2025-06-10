@@ -36,7 +36,7 @@ User.init(
     }, 
     FullName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     Username: {
         type: DataTypes.STRING,
