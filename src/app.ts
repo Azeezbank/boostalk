@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './docs/Swagger'; 
 import authRoutes from './middlewares/Auth.js';
 import users from './controllers/User';
+import post from './routes/Post';
 
 
 const app = express();
@@ -25,5 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 // Route for authentication
 app.use("/api/auth", authRoutes);
 app.use("/get/all/users", users);
+
+// Route for posts
+app.use('/api/post', post)
 
 export default app;

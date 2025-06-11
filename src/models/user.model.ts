@@ -19,7 +19,6 @@ export interface UserAttributes {
     Phone?: string;
     verificationCode: string;
     isVerified: boolean;
-    // email_verified_at?: Date | null;
 }
 
 export class User extends Model<UserAttributes> {

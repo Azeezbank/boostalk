@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import JWT from 'jsonwebtoken';
 import { Op } from 'sequelize';
+import authentication from '../middlewares/midleware'
 
 const router = express.Router();
 
@@ -172,24 +173,6 @@ router.post("/verify", async (req: any, res: any) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-// Middleware to protect route
-const authentication = (req: any, res: any, next: any) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Expecting: Bearer <token>
-  if (!token) return res.status(403).json({ message: 'Token is missing' });
-
-  JWT.verify(token, process.env.SECRET_KEY as string, (err: any, user: any) => {
-    if (err) {
-      console.error('Token is invalid', err)
-      return res.status(401).json({ message: 'Token is invalid' });
-    }
-
-
-    req.user = user; // store decoded user info
-    next();
-});
-};
 
 // Sign in user
 /**
