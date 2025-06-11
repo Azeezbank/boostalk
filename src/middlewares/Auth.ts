@@ -235,7 +235,6 @@ router.post("/login", async (req: any, res: any) => {
   }
 });
 
-
 // forgot passwork email verification
 /**
  * @swagger
