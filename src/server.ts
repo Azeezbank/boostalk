@@ -4,9 +4,9 @@ import database from './config/database.js';
 
 import '../src/models/user.model.js';
 import '../src/models/Post.model.js';
+import '../src/models/Comment.model.js';
 import '../src/models/association.js';
-
-console.log('DB_HOST:', process.env.DB_HOST);
+import '@/models/Likes.model.js';
 
 const PORT = process.env.PORT || 5000;
 

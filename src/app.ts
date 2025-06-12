@@ -6,7 +6,9 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './docs/Swagger'; 
 import authRoutes from './middlewares/Auth.js';
 import users from './controllers/User';
-import post from './routes/Post';
+import post from './routes/ProfileScreen/Post';
+import comment from './routes/ProfileScreen/Comment';
+import like from '@/routes/ProfileScreen/Likes';
 
 
 const app = express();
@@ -27,7 +29,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/get/all/users", users);
 
-// Route for posts
-app.use('/api/post', post)
+// Route for posts featues
+app.use('/api/create/post', post);
+app.use('/api/create/comment', comment);
+app.use('/api/toggle-like', like)
 
 export default app;

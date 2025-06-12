@@ -1,8 +1,8 @@
-// Routes files will be going here...
+// Post files will be going here...
 import express from 'express';
-import User from '../models/user.model';
-import Post from '../models/Post.model';
-import authentication from '../middlewares/midleware';
+import User from '../../models/user.model';
+import Post from '../../models/Post.model';
+import authentication from '../../middlewares/midleware';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
@@ -10,7 +10,7 @@ const router = express.Router();
 //Create post
 /**
  * @swagger
- * /:
+ * /api/create/post
  *   post:
  *     summary: Create a new blog post
  *     tags: [Posts]
@@ -89,5 +89,7 @@ router.post('/', authentication,  async (req: any, res: any) => {
     res.status(500).json({message: 'Internal Server Error'});
 }
 });
+
+
 
 export default router;
