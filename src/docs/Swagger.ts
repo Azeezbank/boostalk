@@ -11,11 +11,11 @@ export const swaggerOptions: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: 'https://boostalk.onrender.com', // change to your API base URL
+        url: 'https://boostalk.onrender.com',
       },
     ],
   },
-  apis: ['./src/middlewares/*.ts'], // path to your route files
+  apis: ['./src/docs/*.ts'], // path to route files
 };
 
 export const swaggerSpec = swaggerJSDoc(swaggerOptions);

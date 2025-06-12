@@ -8,62 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 const router = express.Router();
 
 //Create post
-/**
- * @swagger
- * /api/create/post
- *   post:
- *     summary: Create a new blog post
- *     tags: [Posts]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - title
- *               - content
- *             properties:
- *               title:
- *                 type: string
- *                 example: My First Post
- *               content:
- *                 type: string
- *                 example: This is the content of the blog post.
- *     responses:
- *       200:
- *         description: Post created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Post created successfully
- *       404:
- *         description: User Not Found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: User Not Found.
- *       500:
- *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Internal Server Error
- */
 router.post('/', authentication,  async (req: any, res: any) => {
     const userId = req.user.id;
     const id = uuidv4(); 
@@ -89,6 +33,8 @@ router.post('/', authentication,  async (req: any, res: any) => {
     res.status(500).json({message: 'Internal Server Error'});
 }
 });
+
+// Get all posts, publicc feed
 
 
 
