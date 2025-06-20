@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 const router = express.Router();
 
 //Create post
-router.post('/', authentication,  async (req: any, res: any) => {
+router.post('/create', authentication,  async (req: any, res: any) => {
     const userId = req.user.id;
     const id = uuidv4(); 
     const { title, content } = req.body;
@@ -34,8 +34,18 @@ router.post('/', authentication,  async (req: any, res: any) => {
 }
 });
 
-// Get all posts, publicc feed
+// Get all posts, public feed
+router.get('/get', authentication, async (req: any, res: any) => {
+    try {
+        const posts = await Post.findAll();
 
+        console.log(posts);
+        res.status(200).json({ posts });
+    } catch (err: any) {
+        console.error('Failes to select posts', err.message)
+        return res.status(500).json({message: 'Failes to select posts'})
+    }
+});
 
 
 export default router;

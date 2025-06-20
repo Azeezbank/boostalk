@@ -2,6 +2,7 @@ import User from './user.model';
 import Post from './Post.model';
 import Comment from './Comment.model';
 import Likes from '@/models/Likes.model';
+import Follow from './Follow.model';
 
 //User => Post
 // One-to-many: A User has many Posts
@@ -52,4 +53,21 @@ Post.belongsToMany(User, {
   through: Likes,
   foreignKey: 'postId',
   as: 'Liker'
+});
+
+//A user can follow many users
+//Followers
+User.belongsToMany(User, {
+  through: Follow,
+  as: 'Followers',
+  foreignKey: 'followingId',
+  otherKey: 'followerId'
+});
+
+//Following
+User.belongsToMany(User, {
+  through: Follow,
+  as: 'following',
+  foreignKey: 'followerId',
+  otherKey: 'followingId'
 })

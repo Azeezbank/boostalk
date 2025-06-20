@@ -1,7 +1,7 @@
 //Demo file for the User controller Logic
 import express from 'express';
 const router = express.Router();
-import User from '../models/user.model';
+import User from '../../models/user.model';
 
 /**
  * @swagger

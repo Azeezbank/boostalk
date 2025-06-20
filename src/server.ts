@@ -7,6 +7,7 @@ import '../src/models/Post.model.js';
 import '../src/models/Comment.model.js';
 import '../src/models/association.js';
 import '@/models/Likes.model.js';
+import '@/models/Follow.model.js';
 
 const PORT = process.env.PORT || 5000;
 

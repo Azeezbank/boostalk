@@ -5,10 +5,11 @@ import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './docs/Swagger'; 
 import authRoutes from './middlewares/Auth.js';
-import users from './controllers/User';
+import users from './routes/ProfileScreen/User';
 import post from './routes/ProfileScreen/Post';
 import comment from './routes/ProfileScreen/Comment';
 import like from '@/routes/ProfileScreen/Likes';
+import follow from '@/routes/ProfileScreen/Follow';
 
 
 const app = express();
@@ -30,8 +31,11 @@ app.use("/api/auth", authRoutes);
 app.use("/get/all/users", users);
 
 // Route for posts featues
-app.use('/api/create/post', post);
+app.use('/api/post', post);
 app.use('/api/create/comment', comment);
-app.use('/api/toggle-like', like)
+app.use('/api/toggle-like', like);
+
+//Route for follow
+app.use('/api/toggle-follow', follow);
 
 export default app;
