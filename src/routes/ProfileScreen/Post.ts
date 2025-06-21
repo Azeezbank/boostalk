@@ -70,7 +70,7 @@ router.get('/followers', authentication, async (req: any, res: any) => {
             include: [{model: User, attributes: ['id', 'Username']}],
             order: [['createdAt', 'DESC']]
         });
-        console.log(posts);
+        
         res.status(200).json(posts)
     } catch (err: any) {
         console.error('Failed to fetch posts', err.message)

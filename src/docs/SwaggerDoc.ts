@@ -602,7 +602,7 @@
 
 /**
  * @swagger
- * /api/toggle-follow/:followingId:
+ * /api/follow/:followingId:
  *   post:
  *     summary: Follow or unfollow a user
  *     description: Authenticated users can follow or unfollow another user by providing the target user's ID.

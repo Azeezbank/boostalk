@@ -2,6 +2,7 @@ import express  from "express";
 import authentication from "@/middlewares/midleware";
 import Follow from '@/models/Follow.model';
 import { v4 as uuidv4} from 'uuid';
+import User from "@/models/user.model";
 const router = express.Router();
 
 //follow and unfollowing logic
@@ -31,6 +32,36 @@ router.post('/:followingId', authentication, async (req: any, res: any) => {
     } catch (err: any) {
         console.error('Action Failed', err.message)
         return res.status(500).json({message: 'Action Failed'});
+    }
+});
+
+//Get the followers
+router.get('/followers/:userId', authentication, async (req: any, res: any) => {
+    const userId = req.user.id;
+    try {
+        const user = await User.findByPk(userId, {
+            include: [{model: User, as: 'Followers', attributes: ['id', 'Username']}],
+        });
+        
+        res.status(200).json({followers: user?.followers});
+    } catch (err: any) {
+        console.error('Failed to fetch followers', err.message);
+        return res.status(500).json({message: 'Failed to fetch followers'});
+    }
+});
+
+//Get the number of following users
+router.get('/following/:userId', authentication, async (req: any, res: any) => {
+    const userId = req.user.id;
+    try {
+        const user = await User.findByPk(userId, {
+            include: [{model: User, as: 'following', attributes: ['id', 'Username']}],
+        });
+        
+        res.status(200).json({following: user?.following});
+    } catch (err: any) {
+        console.error('Failed to fetch following users', err.message);
+        return res.status(500).json({message: 'Failed to fetch following users'});
     }
 });
 

@@ -42,6 +42,6 @@ app.use('/api/comment', comment);
 app.use('/api/toggle-like', like);
 
 //Route for follow
-app.use('/api/toggle-follow', follow);
+app.use('/api/follow', follow);
 
 export default app;
