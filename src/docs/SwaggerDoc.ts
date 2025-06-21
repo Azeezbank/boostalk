@@ -602,7 +602,7 @@
 
 /**
  * @swagger
- * /api/follow/:followingId:
+ * /api/follow/{followingId}:
  *   post:
  *     summary: Follow or unfollow a user
  *     description: Authenticated users can follow or unfollow another user by providing the target user's ID.
@@ -652,3 +652,89 @@
  *                   type: string
  *                   example: Action Failed
  */
+
+/**
+* @swagger
+* paths:
+*   /api/follow/followers/{userId}:
+*     get:
+*       tags:
+*         [Follow]
+*       summary: Get followers of the authenticated user
+*       description: Returns a list of users who follow the authenticated user.
+*       parameters:
+*         - name: userId
+*           in: path
+*           required: true
+*           schema:
+*             type: string
+*           description: ID of the user (not used in controller logic; uses authenticated user ID from token)
+*       security:
+*         - bearerAuth: []
+*       responses:
+*         '200':
+*           description: List of followers
+*           content:
+*             application/json:
+*               schema:
+*                 type: object
+*                 properties:
+*                   followers:
+*                     type: array
+*                     items:
+*                       type: object
+*                       properties:
+*                         id:
+*                           type: integer
+*                           example: 2
+*                         Username:
+*                           type: string
+*                           example: john_doe
+*         '401':
+*           description: Unauthorized
+*         '500':
+*           description: Failed to fetch followers
+*/
+
+/**
+* @swagger
+* paths:
+*   /api/follow/following/{userId}:
+*     get:
+*       tags:
+*         [Follow]
+*       summary: Get users the authenticated user is following
+*       description: Returns a list of users that the authenticated user follows.
+*       parameters:
+*         - name: userId
+*           in: path
+*           required: true
+*           schema:
+*             type: string
+*           description: ID of the user (not used in controller logic; uses authenticated user ID from token)
+*       security:
+*         - bearerAuth: []
+*       responses:
+*         '200':
+*           description: List of following users
+*           content:
+*             application/json:
+*               schema:
+*                 type: object
+*                 properties:
+*                   following:
+*                     type: array
+*                     items:
+*                       type: object
+*                       properties:
+*                         id:
+*                           type: integer
+*                           example: 3
+*                         Username:
+*                           type: string
+*                           example: alex_king
+*         '401':
+*           description: Unauthorized
+*         '500':
+*           description: Failed to fetch following users
+*/
