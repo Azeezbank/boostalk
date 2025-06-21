@@ -97,7 +97,7 @@ router.post("/forgot/password", async (req: any, res: any) => {
     if (!user) return res.status(400).json({message: 'Inavlid Emaill Address'});
 
     const token = JWT.sign({id: user.id}, process.env.SECRET_KEY!, {expiresIn: '15m'});
-    const passwordResetLink = `https://boostalk.com/reset/password?token=${token}`;
+    const passwordResetLink = `http://localhost:5173/reset/password?token=${token}`;
 
     //Send password rest link to the user
       await transporter.sendMail({
@@ -156,7 +156,7 @@ router.post("/change/password", authentication, async (req: any, res: any) => {
     if (!user) return res.status(404).json({message: 'User Not Found'});
 
     const token = JWT.sign({id: user.id,}, process.env.SECRET_KEY!, {expiresIn: '15m'});
-    const passwordResetLink = `https://boostalk.com/new/password?token=${token}`;
+    const passwordResetLink = `http://localhost:5173/new/password?token=${token}`;
 
     //Send password rest link to the user
       await transporter.sendMail({
