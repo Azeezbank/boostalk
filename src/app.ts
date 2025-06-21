@@ -28,11 +28,17 @@ app.use(express.urlencoded({ extended: true }));
 
 // Route for authentication
 app.use("/api/auth", authRoutes);
+
+//Get all Uers
 app.use("/get/all/users", users);
 
-// Route for posts featues
+// Route for posts
 app.use('/api/post', post);
-app.use('/api/create/comment', comment);
+
+//Route for comment
+app.use('/api/comment', comment);
+
+//Route for liked
 app.use('/api/toggle-like', like);
 
 //Route for follow

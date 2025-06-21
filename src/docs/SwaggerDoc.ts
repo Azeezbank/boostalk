@@ -442,6 +442,58 @@
  */
 
 
+/**
+ * @swagger
+ * /follow/followers:
+ *   get:
+ *     summary: Get posts from users that the authenticated user is following
+ *     description: Retrieves all posts from users that the authenticated user is following. Requires authentication.
+ *     tags:
+ *       - Follow
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of posts from followed users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   userId:
+ *                     type: string
+ *                   content:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                   User:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       Username:
+ *                         type: string
+ *       500:
+ *         description: Failed to fetch posts due to server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to fetch posts
+ */
+
+
 //Like document file
 /**
  * @swagger
@@ -487,7 +539,7 @@
 // Comment document file
 /**
  * @swagger
- * /api/create/comment/:postId:
+ * /api/comment/:postId:
  *   post:
  *     summary: Create a comment on a post
  *     description: |
@@ -546,4 +598,57 @@
  *                 message:
  *                   type: string
  *                   example: Failed to create comment
+ */
+
+/**
+ * @swagger
+ * /api/toggle-follow/:followingId:
+ *   post:
+ *     summary: Follow or unfollow a user
+ *     description: Authenticated users can follow or unfollow another user by providing the target user's ID.
+ *     tags:
+ *       - Follow
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: followingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the user to follow or unfollow
+ *     responses:
+ *       200:
+ *         description: Successfully followed or unfollowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Followed
+ *                 following:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Cannot follow yourself
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error, You cannot follow yourself
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Action Failed
  */

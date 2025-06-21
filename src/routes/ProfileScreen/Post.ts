@@ -4,6 +4,7 @@ import User from '../../models/user.model';
 import Post from '../../models/Post.model';
 import authentication from '../../middlewares/midleware';
 import { v4 as uuidv4 } from 'uuid';
+import follow from '@/models/Follow.model';
 
 const router = express.Router();
 
@@ -35,7 +36,7 @@ router.post('/create', authentication,  async (req: any, res: any) => {
 });
 
 // Get all posts, public feed
-router.get('/get', authentication, async (req: any, res: any) => {
+router.get('/public/feed', authentication, async (req: any, res: any) => {
     try {
         const posts = await Post.findAll();
 
@@ -44,6 +45,36 @@ router.get('/get', authentication, async (req: any, res: any) => {
     } catch (err: any) {
         console.error('Failes to select posts', err.message)
         return res.status(500).json({message: 'Failes to select posts'})
+    }
+});
+
+//Get posts of followers
+router.get('/followers', authentication, async (req: any, res: any) => {
+    const followerId = req.user.id;
+    try {
+
+        //Get Users this user follow
+        const following = await follow.findAll({ where: {followerId}, attributes: ['followingId']
+        });
+
+        const followingIds = following.map(f => f.followingId);
+
+        // If the user is not following anyone
+        if (followingIds.length === 0) {
+            console.log('User Not following Anyone');
+            return res.status(200).json([]);
+        }
+
+        // fetch post from them
+        const posts = await Post.findAll({ where: {userId: followingIds}, 
+            include: [{model: User, attributes: ['id', 'Username']}],
+            order: [['createdAt', 'DESC']]
+        });
+        console.log(posts);
+        res.status(200).json(posts)
+    } catch (err: any) {
+        console.error('Failed to fetch posts', err.message)
+        return res.status(500).json({message: 'Failed to fetch posts'});
     }
 });
 

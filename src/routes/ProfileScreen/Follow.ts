@@ -4,6 +4,7 @@ import Follow from '@/models/Follow.model';
 import { v4 as uuidv4} from 'uuid';
 const router = express.Router();
 
+//follow and unfollowing logic
 router.post('/:followingId', authentication, async (req: any, res: any) => {
     const followingId = req.params.followingId;
     const followerId = req.user.id

@@ -39,4 +39,19 @@ router.post('/:postId', authentication, async (req: any, res: any) => {
     }
 });
 
+//Get a post comments
+router.get('/:postId', authentication, async (req: any, res: any) => {
+    const postId = req.params.postId;
+    try {
+        const comments = await Comment.findAll({where: {postId},
+        include: [{model: User, attributes: ['id', 'Username']}],
+        order: [['createdAt', 'DESC']]
+    });
+
+    res.status(200).json({comments}, {message: 'Post Fetched'});
+    } catch (err: any) {
+        console.error('Failed to fetch Comment')
+    }
+});
+
 export default router;
