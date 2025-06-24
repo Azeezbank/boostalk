@@ -738,3 +738,64 @@
 *         '500':
 *           description: Failed to fetch following users
 */
+
+//Messages
+/**
+ * @swagger
+ * /api/messages/messages/{userId}/{chatPartnerId}:
+ *   get:
+ *     summary: Get all messages between two users
+ *     description: Retrieve all messages exchanged between the authenticated user and the chat partner, ordered by timestamp.
+ *     tags:
+ *       - Messages
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the requesting user
+ *       - in: path
+ *         name: chatPartnerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the chat partner
+ *     responses:
+ *       200:
+ *         description: List of messages between the two users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   senderId:
+ *                     type: string
+ *                   receiverId:
+ *                     type: string
+ *                   content:
+ *                     type: string
+ *                   timestamp:
+ *                     type: string
+ *                     format: date-time
+ *                   Sender:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       Username:
+ *                         type: string
+ *                   Receiver:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       Username:
+ *                         type: string
+ *       500:
+ *         description: Failed to fetch messages
+ */

@@ -16,7 +16,7 @@ dotenv.config();
 
 // Register Route
 router.post("/register", async (req: any, res: any) => {
-  const {FullName, Username, Phone, Email, Password } = req.body;
+  const { FullName, Username, Phone, Email, Password } = req.body;
   const userId = uuidv4();
   try {
     const existing = await User.findOne({ where: { Email } });
@@ -75,17 +75,17 @@ router.post("/verify", async (req: any, res: any) => {
 router.post("/login", async (req: any, res: any) => {
   const { Email, Password } = req.body;
   try {
-    const user = await User.findOne({where: { [Op.or]: [{Email:  Email}, {Username: Email}]}});
-    if (!user) return res.status(404).json({message: 'User Not Found'});
+    const user = await User.findOne({ where: { [Op.or]: [{ Email: Email }, { Username: Email }] } });
+    if (!user) return res.status(404).json({ message: 'User Not Found' });
 
     const isPasswordMatch = await bcrypt.compare(Password, user.Password);
-    if (!isPasswordMatch) return res.status(200).json({message: 'Incorrect password'});
+    if (!isPasswordMatch) return res.status(200).json({ message: 'Incorrect password' });
 
-     const token = JWT.sign({id: user.id, email: user.Email}, process.env.SECRET_KEY as string, {expiresIn: '1d'});
-     console.log('Succes');
-     res.json({ token });
+    const token = JWT.sign({ id: user.id, email: user.Email }, process.env.SECRET_KEY as string, { expiresIn: '1d' });
+    console.log('Succes');
+    res.json({ token });
   } catch (err: any) {
-    res.status(500).json({ message: err.message})
+    res.status(500).json({ message: err.message })
   }
 });
 
@@ -93,14 +93,14 @@ router.post("/login", async (req: any, res: any) => {
 router.post("/forgot/password", async (req: any, res: any) => {
   const { Email } = req.body;
   try {
-    const user = await User.findOne({ where: { Email }});
-    if (!user) return res.status(400).json({message: 'Inavlid Emaill Address'});
+    const user = await User.findOne({ where: { Email } });
+    if (!user) return res.status(400).json({ message: 'Inavlid Emaill Address' });
 
-    const token = JWT.sign({id: user.id}, process.env.SECRET_KEY!, {expiresIn: '15m'});
-    const passwordResetLink = `http://localhost:5173/reset/password?token=${token}`;
+    const token = JWT.sign({ id: user.id }, process.env.SECRET_KEY!, { expiresIn: '15m' });
+    const passwordResetLink = `http://localhost:5173/api/auth/reset/password?token=${token}`;
 
     //Send password rest link to the user
-      await transporter.sendMail({
+    await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: Email,
       subject: "Password Reset Link",
@@ -110,9 +110,9 @@ router.post("/forgot/password", async (req: any, res: any) => {
         <p>This link will expire in 15 minutes.</p>
       `,
     });
-    res.status(200).json({ message: 'Password Reset Link Sent Successfully'})
+    res.status(200).json({ message: 'Password Reset Link Sent Successfully' })
   } catch (err: any) {
-    return res.status(500).json({message: err.message})
+    return res.status(500).json({ message: err.message })
   }
 });
 
@@ -121,16 +121,16 @@ router.post("/reset/password", async (req: any, res: any) => {
   const token = req.query.token;
   const { newPassword, confirmPassword } = req.body;
   if (newPassword !== confirmPassword) {
-      console.log('PasswordMismatch, Please input same password');
-      return res.status(400).json({message: 'PasswordMismatch, Please input same password'});
-    }
+    console.log('PasswordMismatch, Please input same password');
+    return res.status(400).json({ message: 'PasswordMismatch, Please input same password' });
+  }
   try {
     const decoded: any = JWT.verify(token, process.env.SECRET_KEY!);
     const user = await User.findByPk(decoded.id);
 
     if (!user) {
       console.log('User not found');
-      return res.status(404).json({message: 'User not found'})
+      return res.status(404).json({ message: 'User not found' })
     }
 
     const hashedPassword = await bcrypt.hash(confirmPassword, 10);
@@ -138,28 +138,28 @@ router.post("/reset/password", async (req: any, res: any) => {
 
     await user.save();
 
-    res.status(200).json({message: 'Password Updated'});
-} catch (err: any) {
-  console.error(err.message)
-  return res.status(500).json({message: err.message})
-}
+    res.status(200).json({ message: 'Password Updated' });
+  } catch (err: any) {
+    console.error(err.message)
+    return res.status(500).json({ message: err.message })
+  }
 });
 
 
 //Change password
 router.post("/change/password", authentication, async (req: any, res: any) => {
-  
+
   const userid = req.user.id;
   const userMail = req.user.Email;
   try {
-    const user = await User.findOne({ where: { id: userid }});
-    if (!user) return res.status(404).json({message: 'User Not Found'});
+    const user = await User.findOne({ where: { id: userid } });
+    if (!user) return res.status(404).json({ message: 'User Not Found' });
 
-    const token = JWT.sign({id: user.id,}, process.env.SECRET_KEY!, {expiresIn: '15m'});
-    const passwordResetLink = `http://localhost:5173/new/password?token=${token}`;
+    const token = JWT.sign({ id: user.id, }, process.env.SECRET_KEY!, { expiresIn: '15m' });
+    const passwordResetLink = `http://localhost:5173/api/auth/new/password?token=${token}`;
 
     //Send password rest link to the user
-      await transporter.sendMail({
+    await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: userMail,
       subject: "Password Reset Link",
@@ -169,9 +169,9 @@ router.post("/change/password", authentication, async (req: any, res: any) => {
         <p>This link will expire in 15 minutes.</p>
       `,
     });
-    res.status(200).json({ message: 'Password Reset Link Sent Successfully'})
+    res.status(200).json({ message: 'Password Reset Link Sent Successfully' })
   } catch (err: any) {
-    return res.status(500).json({message: err.message})
+    return res.status(500).json({ message: err.message })
   }
 });
 
@@ -181,26 +181,26 @@ router.post("/new/password", authentication, async (req: any, res: any) => {
   const { newPassword, confirmNewPassword } = req.body;
   const userid = req.user.id;
   try {
-    const user = await User.findOne({where: { id: userid}});
+    const user = await User.findOne({ where: { id: userid } });
 
     if (!user) {
       console.log('Password Cannot be found, reset your password with forgot password');
-      return res.status(404).json({message: 'Password Cannot be found, reset your password with forgot password'});
+      return res.status(404).json({ message: 'Password Cannot be found, reset your password with forgot password' });
     }
 
     if (newPassword !== confirmNewPassword) {
       console.log('Password Mismatch, the new password input same password for both new pass and confirm password field');
-      return res.status(403).json({message: 'Forbiden, Password Mismatch, the new password input same password for both new pass and confirm password field'})
+      return res.status(403).json({ message: 'Forbiden, Password Mismatch, the new password input same password for both new pass and confirm password field' })
     }
 
     const hashedPassword = await bcrypt.hash(confirmNewPassword, 10);
     user.Password = hashedPassword;
     await user.save();
 
-    res.status(200).json({message: 'Password Changed Successfully'});
+    res.status(200).json({ message: 'Password Changed Successfully' });
   } catch (err: any) {
     console.error(err.message)
-    return res.status(500).json({message: err.message})
+    return res.status(500).json({ message: err.message })
   }
 });
 

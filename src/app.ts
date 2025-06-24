@@ -11,8 +11,9 @@ import comment from './routes/ProfileScreen/Comment';
 import like from './routes/ProfileScreen/Likes';
 import follow from './routes/ProfileScreen/Follow';
 import initializeSocket from './routes/messages/socket';
-import http, { createServer } from 'http';
+import http from 'http';
 import { Server } from 'socket.io';
+import messages from './routes/messages/Messages';
 
 
 const app = express();
@@ -54,6 +55,9 @@ app.use('/api/toggle-like', like);
 
 //Route for follow
 app.use('/api/follow', follow);
+
+//Route to messags
+app.use('/api/messages', messages)
 
 // Initialize socket logic
 initializeSocket(io);
