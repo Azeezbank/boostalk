@@ -1,5 +1,4 @@
-import app from './app.js';
-
+import {server } from './app.js';
 import database from './config/database.js';
 
 import '../src/models/user.model.js';
@@ -19,7 +18,7 @@ async function start() {
     // await sequelize.sync({ alter: true }); // Or use { force: true } in dev
     await database.sync({ alter: true });
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   } catch (err) {

@@ -3,6 +3,7 @@ import Post from './Post.model';
 import Comment from './Comment.model';
 import Likes from '@/models/Likes.model';
 import Follow from './Follow.model';
+import Messages from './Messages.model';
 
 //User => Post
 // One-to-many: A User has many Posts
@@ -70,4 +71,11 @@ User.belongsToMany(User, {
   as: 'following',
   foreignKey: 'followerId',
   otherKey: 'followingId'
-})
+});
+
+//User and messages relationship
+User.hasMany(Messages, { foreignKey: 'senderId', as: 'SentMessages' });
+User.hasMany(Messages, { foreignKey: 'receiverId', as: 'ReceivedMessages' });
+
+Messages.belongsTo(User, { foreignKey: 'senderId', as: 'Sender' });
+Messages.belongsTo(User, { foreignKey: 'receiverId', as: 'Receiver' });

@@ -8,11 +8,22 @@ import authRoutes from './middlewares/Auth.js';
 import users from './routes/ProfileScreen/User';
 import post from './routes/ProfileScreen/Post';
 import comment from './routes/ProfileScreen/Comment';
-import like from '@/routes/ProfileScreen/Likes';
-import follow from '@/routes/ProfileScreen/Follow';
+import like from './routes/ProfileScreen/Likes';
+import follow from './routes/ProfileScreen/Follow';
+import initializeSocket from './routes/messages/socket';
+import http, { createServer } from 'http';
+import { Server } from 'socket.io';
 
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // replace with frontend URL in production
+    methods: ["GET", "POST"]
+  }
+});
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(helmet());
@@ -44,4 +55,7 @@ app.use('/api/toggle-like', like);
 //Route for follow
 app.use('/api/follow', follow);
 
-export default app;
+// Initialize socket logic
+initializeSocket(io);
+
+export { app, server };
