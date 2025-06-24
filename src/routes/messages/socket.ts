@@ -33,8 +33,14 @@ const initializeSocket = (io: Server) => {
       }
     });
 
-    socket.on("read_message", ({ senderId, receiverId, messageId }) => {
+    socket.on("read_message", async ({ senderId, receiverId, messageId }) => {
       const senderSocket = users[senderId];
+
+      // Update the DB to mark the message as read
+  await Messages.update(
+    { isRead: true },
+    { where: { id: messageId, receiverId } }
+  );
       if (senderSocket) {
         io.to(senderSocket).emit("read_message", {
           receiverId,
