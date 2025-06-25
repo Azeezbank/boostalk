@@ -384,7 +384,7 @@
 //Post document
 /**
  * @swagger
- * /api/create/post:
+ * /api/post/create:
  *   post:
  *     summary: Create a new blog post
  *     description: Allows an authenticated user to create a blog post with a title and content.
@@ -401,6 +401,7 @@
  *             required:
  *               - title
  *               - content
+ *               - image
  *             properties:
  *               title:
  *                 type: string
@@ -408,6 +409,9 @@
  *               content:
  *                 type: string
  *                 example: This is the content of the blog post.
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       201:
  *         description: Post created successfully
@@ -439,6 +443,51 @@
  *                 message:
  *                   type: string
  *                   example: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /api/post/public/feed:
+ *   get:
+ *     summary: Get all posts in the public feed
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of public posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 posts:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       500:
+ *         description: Failed to select posts
+ */
+
+/**
+ * @swagger
+ * /api/post/followers:
+ *   get:
+ *     summary: Get posts from users the current user follows
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of posts from followed users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         description: Failed to fetch posts
  */
 
 

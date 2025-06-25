@@ -9,6 +9,7 @@ export interface PostAttributes {
   title: string;
   content: string;
   userId: string; // Foreign key
+  image: string;
 }
 
 export class Post extends Model<PostAttributes> {
@@ -24,7 +25,7 @@ Post.init(
     },
     title: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     content: {
       type: DataTypes.TEXT,
@@ -39,6 +40,10 @@ Post.init(
       },
       onDelete: 'CASCADE',
     },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    }
   },
   {
     sequelize: database,

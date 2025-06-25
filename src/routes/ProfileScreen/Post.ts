@@ -5,14 +5,17 @@ import Post from '../../models/Post.model';
 import authentication from '../../middlewares/midleware';
 import { v4 as uuidv4 } from 'uuid';
 import follow from '@/models/Follow.model';
+import upload from '@/docs/cloudinary.upload';
+import { Request, Response } from 'express';
 
 const router = express.Router();
 
 //Create post
-router.post('/create', authentication,  async (req: any, res: any) => {
+router.post('/create', authentication, upload.single('image'),  async (req: any, res: any) => {
     const userId = req.user.id;
     const id = uuidv4(); 
     const { title, content } = req.body;
+    const imageUrl = req.file?.path || null;
     try {
     const user = await User.findOne({where: {id: userId}});
 
@@ -25,7 +28,8 @@ router.post('/create', authentication,  async (req: any, res: any) => {
         id: id,
         title,
         content,
-        userId: user.id
+        userId: user.id,
+        image: imageUrl
     })
 
     res.status(200).json({message: 'Post created successfully'});
@@ -38,9 +42,10 @@ router.post('/create', authentication,  async (req: any, res: any) => {
 // Get all posts, public feed
 router.get('/public/feed', authentication, async (req: any, res: any) => {
     try {
-        const posts = await Post.findAll();
+        const posts = await Post.findAll({
+            order: [['createdAt', 'DESC']]
+        });
 
-        console.log(posts);
         res.status(200).json({ posts });
     } catch (err: any) {
         console.error('Failes to select posts', err.message)
@@ -62,7 +67,7 @@ router.get('/followers', authentication, async (req: any, res: any) => {
         // If the user is not following anyone
         if (followingIds.length === 0) {
             console.log('User Not following Anyone');
-            return res.status(200).json([]);
+            return res.status(200).json({posts: []});
         }
 
         // fetch post from them
