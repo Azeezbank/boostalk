@@ -14,6 +14,7 @@ import initializeSocket from './routes/messages/socket';
 import http from 'http';
 import { Server } from 'socket.io';
 import messages from './routes/messages/Messages';
+import profile from '@/routes/Profile/Profile';
 
 
 const app = express();
@@ -61,5 +62,8 @@ app.use('/api/messages', messages)
 
 // Initialize socket logic
 initializeSocket(io);
+
+//Route to profile
+app.use('/api/profile', profile);
 
 export { app, server };

@@ -4,6 +4,7 @@ import Comment from './Comment.model';
 import Likes from '@/models/Likes.model';
 import Follow from './Follow.model';
 import Messages from './Messages.model';
+import Profile from './Profile.model';
 
 //User => Post
 // One-to-many: A User has many Posts
@@ -79,3 +80,12 @@ User.hasMany(Messages, { foreignKey: 'receiverId', as: 'ReceivedMessages' });
 
 Messages.belongsTo(User, { foreignKey: 'senderId', as: 'Sender' });
 Messages.belongsTo(User, { foreignKey: 'receiverId', as: 'Receiver' });
+
+//a user has one profile, and a profile has a user
+//One-to-one relationship
+User.hasOne(Profile, {
+  foreignKey: 'UserId', onDelete: 'CASCADE',
+});
+Profile.belongsTo(User, {
+  foreignKey: 'userId',
+})

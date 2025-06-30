@@ -848,3 +848,92 @@
  *       500:
  *         description: Failed to fetch messages
  */
+
+//Profile
+/**
+ * @swagger
+ * /api/profile/{id}:
+ *   patch:
+ *     summary: Update user profile information and images
+ *     tags:
+ *       - Profile
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the user to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               Username:
+ *                 type: string
+ *               Phone:
+ *                 type: string
+ *               Email:
+ *                 type: string
+ *               bio:
+ *                 type: string
+ *               profilePic:
+ *                 type: string
+ *                 format: binary
+ *               coverPic:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: User Profile Updated Successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User Profile Updated Successfully
+ *       404:
+ *         description: User Not Found
+ *       500:
+ *         description: Something went wrong
+ */
+
+/**
+ * @swagger
+ * /api/profile:
+ *   get:
+ *     summary: Get current user profile
+ *     tags:
+ *       [ Profile ]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 Username:
+ *                   type: string
+ *                 Phone:
+ *                   type: string
+ *                 Email:
+ *                   type: string
+ *                 Profile:
+ *                   type: object
+ *                   properties:
+ *                     profilePicUrl:
+ *                       type: string
+ *                     coverPicUr:
+ *                       type: string
+ *       500:
+ *         description: Failed to select user profile
+ */
