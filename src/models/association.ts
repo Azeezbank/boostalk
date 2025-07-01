@@ -84,7 +84,7 @@ Messages.belongsTo(User, { foreignKey: 'receiverId', as: 'Receiver' });
 //a user has one profile, and a profile has a user
 //One-to-one relationship
 User.hasOne(Profile, {
-  foreignKey: 'UserId', onDelete: 'CASCADE',
+  foreignKey: 'userId', onDelete: 'CASCADE',
 });
 Profile.belongsTo(User, {
   foreignKey: 'userId',
