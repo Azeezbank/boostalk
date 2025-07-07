@@ -15,6 +15,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import messages from './routes/messages/Messages';
 import profile from '@/routes/Profile/Profile';
+import Circle from '@/routes/Circle/Circle';
 
 
 const app = express();
@@ -65,5 +66,8 @@ initializeSocket(io);
 
 //Route to profile
 app.use('/api/profile', profile);
+
+//Circle section
+app.use('/api/circle', Circle)
 
 export { app, server };

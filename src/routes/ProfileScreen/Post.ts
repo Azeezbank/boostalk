@@ -6,7 +6,6 @@ import authentication from '../../middlewares/midleware';
 import { v4 as uuidv4 } from 'uuid';
 import follow from '@/models/Follow.model';
 import upload from '@/docs/cloudinary.upload';
-import { Request, Response } from 'express';
 
 const router = express.Router();
 
@@ -16,6 +15,7 @@ router.post('/create', authentication, upload.single('image'),  async (req: any,
     const id = uuidv4(); 
     const { title, content } = req.body;
     const imageUrl = req.file?.path || null;
+    const circleId = req.params.CircleId || null;
     try {
     const user = await User.findOne({where: {id: userId}});
 
@@ -29,7 +29,8 @@ router.post('/create', authentication, upload.single('image'),  async (req: any,
         title,
         content,
         userId: user.id,
-        image: imageUrl
+        image: imageUrl,
+        circleId
     })
 
     res.status(200).json({message: 'Post created successfully'});

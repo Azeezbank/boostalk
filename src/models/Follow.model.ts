@@ -15,7 +15,7 @@ Follow.init({
 
     followerId: {
         type: DataTypes.UUID,
-        allowNull: false
+        allowNull: false,
     },
     followingId: {
         type: DataTypes.UUID,

@@ -10,6 +10,7 @@ export interface PostAttributes {
   content: string;
   userId: string; // Foreign key
   image: string;
+  circleId: string;
 }
 
 export class Post extends Model<PostAttributes> {
@@ -43,6 +44,10 @@ Post.init(
     image: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    circleId: {
+      type: DataTypes.UUID,
+      allowNull: true
     }
   },
   {

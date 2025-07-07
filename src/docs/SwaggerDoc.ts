@@ -250,7 +250,7 @@
 
 /**
  * @swagger
- * /change/password:
+ * /api/auth/change/password:
  *   post:
  *     summary: Send password reset link to user email
  *     description: Protected route. Requires JWT token in Authorization header.
@@ -312,7 +312,7 @@
 
 /**
  * @swagger
- * /new/password:
+ * /api/auth/new/password:
  *   post:
  *     summary: Change user password
  *     description: >
@@ -488,58 +488,6 @@
  *                 type: object
  *       500:
  *         description: Failed to fetch posts
- */
-
-
-/**
- * @swagger
- * /follow/followers:
- *   get:
- *     summary: Get posts from users that the authenticated user is following
- *     description: Retrieves all posts from users that the authenticated user is following. Requires authentication.
- *     tags:
- *       - Follow
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of posts from followed users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   userId:
- *                     type: string
- *                   content:
- *                     type: string
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                   updatedAt:
- *                     type: string
- *                     format: date-time
- *                   User:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       Username:
- *                         type: string
- *       500:
- *         description: Failed to fetch posts due to server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Failed to fetch posts
  */
 
 
@@ -791,7 +739,7 @@
 //Messages
 /**
  * @swagger
- * /api/messages/messages/{userId}/{chatPartnerId}:
+ * /api/messages/{userId}/{chatPartnerId}:
  *   get:
  *     summary: Get all messages between two users
  *     description: Retrieve all messages exchanged between the authenticated user and the chat partner, ordered by timestamp.
@@ -936,4 +884,307 @@
  *                       type: string
  *       500:
  *         description: Failed to select user profile
+ */
+
+//Circles section
+
+/**
+ * @swagger
+ * /api/circle/create:
+ *   post:
+ *     summary: Create a new circle
+ *     description: Creates a new circle with an optional profile picture. The authenticated user becomes the admin of the circle.
+ *     tags:
+ *       - Circles
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - circle_name
+ *               - description
+ *             properties:
+ *               profile:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional circle profile picture
+ *               circle_name:
+ *                 type: string
+ *                 description: Name of the circle
+ *               description:
+ *                 type: string
+ *                 description: Description of the circle
+ *     responses:
+ *       200:
+ *         description: Circle created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Circle created successfully
+ *       500:
+ *         description: Failed to create circle
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to create circle
+ *                 circle:
+ *                   type: object
+ *                   description: Partially created circle object (if available)
+ */
+
+/**
+ * @swagger
+ * /api/circle/join/{circleId}:
+ *   post:
+ *     summary: Send a request to join a circle
+ *     description: Authenticated users can request to join a specific circle. If already a member or pending, it returns an error.
+ *     tags:
+ *       [Circles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: circleId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the circle to join
+ *     responses:
+ *       200:
+ *         description: Join request sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Request Sent To Join circle
+ *                 request:
+ *                   type: object
+ *                   description: Join request object
+ *       400:
+ *         description: Already requested or already a member
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Already requested or member
+ *       500:
+ *         description: Server error
+ */
+
+
+/**
+ * @swagger
+ * /api/circle/approve/{circleId}/{userId}:
+ *   post:
+ *     summary: Approve a member's request to join a circle
+ *     description: Only an admin of the circle can approve pending join requests.
+ *     tags:
+ *       [Circles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: circleId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the circle
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the user to approve
+ *     responses:
+ *       200:
+ *         description: Member approved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Member approved
+ *       403:
+ *         description: Only admin can approve requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Only Admin can approve requests
+ *       404:
+ *         description: User not found in circle
+ *       500:
+ *         description: Failed to approve request
+ */
+
+/**
+ * @swagger
+ * /api/circle/add_member/{circleId}/{userId}:
+ *   post:
+ *     summary: Admin adds a user to a circle directly
+ *     description: An admin can add another user to a circle without requiring their request or approval.
+ *     tags:
+ *       [Circles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: circleId
+ *         in: path
+ *         required: true
+ *         description: ID of the circle
+ *         schema:
+ *           type: string
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: ID of the user to add
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User successfully added to the circle
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User added to circle
+ *       400:
+ *         description: User is already in the circle or pending approval
+ *       403:
+ *         description: Only admins can add members
+ *       500:
+ *         description: Failed to add member to circle
+ */
+
+
+/**
+ * @swagger
+ * /api/circle/posts/{circleId}:
+ *   post:
+ *     summary: Get posts from all approved members of a circle
+ *     description: Only approved members of a circle can view posts created by other members in the same circle.
+ *     tags:
+ *       [Circles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: circleId
+ *         in: path
+ *         required: true
+ *         description: ID of the circle
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of posts from approved circle members
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   content:
+ *                     type: string
+ *                   userId:
+ *                     type: string
+ *                   circleId:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                   User:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       Username:
+ *                         type: string
+ *                       Email:
+ *                         type: string
+ *       403:
+ *         description: User is not authorized to view posts in this circle
+ *       500:
+ *         description: Failed to fetch circle posts
+ */
+
+/**
+ * @swagger
+ * /api/circle/pending/requests/{circleId}:
+ *   get:
+ *     summary: Get all pending join requests for a circle
+ *     description: Admins can view a list of users who have requested to join the circle but are still pending approval.
+ *     tags:
+ *       [Circles]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: circleId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the circle
+ *     responses:
+ *       200:
+ *         description: List of pending join requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   circleId:
+ *                     type: string
+ *                   userId:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *                     example: Pending
+ *                   role:
+ *                     type: string
+ *                   User:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       Username:
+ *                         type: string
+ *                       Email:
+ *                         type: string
+ *       403:
+ *         description: Only circle admins can view pending requests
+ *       500:
+ *         description: Failed to fetch pending requests
  */
