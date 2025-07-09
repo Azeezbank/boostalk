@@ -5,8 +5,8 @@ import Likes from '@/models/Likes.model';
 import Follow from './Follow.model';
 import Messages from './Messages.model';
 import Profile from './Profile.model';
-import CircleMember from './CircleMember.model';
-import Circle from './Circle.model';
+import circleMember from './CircleMember.model';
+import circle from './Circle.model';
 
 //User => Post
 // One-to-many: A User has many Posts
@@ -93,11 +93,11 @@ Profile.belongsTo(User, {
 })
 
 // Circle, CircleMember, post and user relationship
-User.hasMany(Circle, {foreignKey: 'userId'});
-Circle.belongsTo(User, { foreignKey: 'userId' });
-User.hasMany(CircleMember, {foreignKey: 'userId'});
-CircleMember.belongsTo(User, { foreignKey: 'userId'});
-Circle.hasMany(CircleMember, {foreignKey: 'CircleId'});
-CircleMember.belongsTo(Circle, { foreignKey: 'CircleId' });
-Post.belongsTo(Circle, { foreignKey: 'CircleId' });
-Circle.hasMany(Post, { foreignKey: 'CircleId' });
+User.hasMany(circle, {foreignKey: 'userId'});
+circle.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(circleMember, {foreignKey: 'userId'});
+circleMember.belongsTo(User, { foreignKey: 'userId'});
+circle.hasMany(circleMember, {foreignKey: 'circleId'});
+circleMember.belongsTo(circle, { foreignKey: 'circleId' });
+Post.belongsTo(circle, { foreignKey: 'circleId' });
+circle.hasMany(Post, { foreignKey: 'circleId' });
