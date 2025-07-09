@@ -79,11 +79,11 @@ router.post("/login", async (req: any, res: any) => {
     if (!user) return res.status(404).json({ message: 'User Not Found' });
 
     const isPasswordMatch = await bcrypt.compare(Password, user.Password);
-    if (!isPasswordMatch) return res.status(200).json({ message: 'Incorrect password' });
+    if (!isPasswordMatch) return res.status(400).json({ message: 'Incorrect password' });
 
     const token = JWT.sign({ id: user.id, email: user.Email }, process.env.SECRET_KEY as string, { expiresIn: '1d' });
-    console.log('Succes');
-    res.json({ token });
+
+    res.status(200).json({ token, userInfo: { id: user.id, Username: user.Username, Phone: user.Phone, Email: user.Email, Role: user.Role } });
   } catch (err: any) {
     res.status(500).json({ message: err.message })
   }

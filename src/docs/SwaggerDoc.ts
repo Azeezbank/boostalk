@@ -108,8 +108,9 @@
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Sign in a user using email or username and password
- *     tags: [Auth]
+ *     summary: Sign in user
+ *     tags:
+ *       [Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -122,15 +123,13 @@
  *             properties:
  *               Email:
  *                 type: string
- *                 description: Email or username of the user
- *                 example: johndoe@example.com
+ *                 example: user@example.com
  *               Password:
  *                 type: string
- *                 description: User's password
- *                 example: password123
+ *                 example: yourpassword123
  *     responses:
  *       200:
- *         description: Login successful or incorrect password
+ *         description: User successfully logged in
  *         content:
  *           application/json:
  *             schema:
@@ -138,14 +137,55 @@
  *               properties:
  *                 token:
  *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+ *                 userInfo:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 1
+ *                     Username:
+ *                       type: string
+ *                       example: johndoe
+ *                     Phone:
+ *                       type: string
+ *                       example: "+2348012345678"
+ *                     Email:
+ *                       type: string
+ *                       example: user@example.com
+ *                     Role:
+ *                       type: string
+ *                       example: user
+ *       400:
+ *         description: Incorrect password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
  *                 message:
  *                   type: string
  *                   example: Incorrect password
  *       404:
  *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User Not Found
  *       500:
- *         description: Server error
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong
  */
 
 /**
