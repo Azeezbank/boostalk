@@ -1287,13 +1287,15 @@
  *         description: Notifications retrieved successfully
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 notifications:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Notification'
+ *             example:
+ *               notifications:
+ *                 - id: "123"
+ *                   senderId: "user1"
+ *                   receiverId: "user2"
+ *                   type: "add_member"
+ *                   message: "You have been added to a new circle"
+ *                   createdAt: "2025-07-10T12:00:00Z"
+ *                   updatedAt: "2025-07-10T12:00:00Z"
  *       404:
  *         description: No notifications found
  *         content:
@@ -1330,13 +1332,15 @@
  *         description: Admin notifications retrieved successfully
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 notifications:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Notification'
+ *             example:
+ *               notifications:
+ *                 - id: "123"
+ *                   senderId: "user1"
+ *                   receiverId: "user2"
+ *                   type: "add_member"
+ *                   message: "You have been added to a new circle"
+ *                   createdAt: "2025-07-10T12:00:00Z"
+ *                   updatedAt: "2025-07-10T12:00:00Z"
  *       403:
  *         description: User is not authorized (not an admin)
  *         content:
