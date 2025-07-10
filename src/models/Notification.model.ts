@@ -25,6 +25,10 @@ Notification.init({
         type: DataTypes.UUID,
         allowNull: false,
     },
+    type: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     message: {
     type: DataTypes.TEXT,
     allowNull: false

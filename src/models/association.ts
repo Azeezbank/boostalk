@@ -7,6 +7,7 @@ import Messages from './Messages.model';
 import Profile from './Profile.model';
 import circleMember from './CircleMember.model';
 import circle from './Circle.model';
+import Notification from './Notification.model';
 
 //User => Post
 // One-to-many: A User has many Posts
@@ -101,3 +102,23 @@ circle.hasMany(circleMember, {foreignKey: 'circleId'});
 circleMember.belongsTo(circle, { foreignKey: 'circleId' });
 Post.belongsTo(circle, { foreignKey: 'circleId' });
 circle.hasMany(Post, { foreignKey: 'circleId' });
+
+
+//Notification model association
+Notification.belongsTo(User, {
+  foreignKey: 'senderId',
+  as: 'Sender'
+});
+User.hasMany(Notification, {
+  foreignKey: 'senderId',
+  as: 'Sender'
+});
+
+Notification.belongsTo(User, {
+  foreignKey: 'receiverId',
+  as: 'Receiver'
+});
+User.hasMany(Notification, {
+  foreignKey: 'receiverId',
+  as: 'Receiver'
+});

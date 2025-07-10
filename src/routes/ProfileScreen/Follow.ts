@@ -9,7 +9,6 @@ const router = express.Router();
 router.post('/:followingId', authentication, async (req: any, res: any) => {
     const followingId = req.params.followingId;
     const followerId = req.user.id
-    const id = uuidv4();
     try {
         if (followerId === followingId) {
             console.log('Error, You cannot follow yourself');

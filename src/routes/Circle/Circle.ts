@@ -7,6 +7,8 @@ import CircleMember from '@/models/CircleMember.model';
 import Post from '@/models/Post.model';
 import User from '@/models/user.model';
 import { Op } from 'sequelize';
+import Notification from '@/models/Notification.model';
+import { idText } from 'typescript';
 const router = express.Router();
 
 //Create circle
@@ -30,6 +32,7 @@ router.post('/create', authentication, upload.single('profile'), async (req: any
 router.post('/join/:circleId', authentication, async (req: any, res: any) => {
   const userId = req.user.id;
   const circleId = req.params.circleId;
+  const type = 'Circle Join Request';
   try {
     const existing = await CircleMember.findOne({ where: { circleId, userId } });
     if (existing) {
@@ -38,6 +41,41 @@ router.post('/join/:circleId', authentication, async (req: any, res: any) => {
     }
 
     const request = await CircleMember.create({ circleId, userId });
+
+    const senderNames = await CircleMember.findOne({where: {circleId, userId}, 
+      include: [{model: User, attributes: ['Username']}]
+    });
+
+    const senderName = senderNames?.sender?.Username;
+
+    // Create a notification for the circle admin
+    const circle = await Circle.findByPk(circleId);
+    if (!circle) {
+      console.log('Circle not found');
+      return res.status(404).json({ message: 'Circle not found' });
+    }
+
+    const adminMembers = await CircleMember.findAll({
+      where: {
+        circleId,
+        role: 'Admin',
+        status: 'Approved'
+      }
+    });
+
+    const adminIds = adminMembers.map(member => member.userId);
+
+    // Create notifications for each admin
+    for (const adminId of adminIds) {
+      await Notification.create({
+        id: uuidv4(),
+        senderId: userId,
+        receiverId: adminId,
+        type,
+        message: `${senderName} has requested to join the circle "${circle.circle_name}".`
+      });
+    }
+
     res.status(200).json({ message: 'Request Sent To Join circle', request });
 
   } catch (err: any) {
@@ -49,19 +87,30 @@ router.post('/join/:circleId', authentication, async (req: any, res: any) => {
 // Admin to approve the request
 router.post('/approve/:circleId/:userId', authentication, async (req: any, res: any) => {
   const { circleId, userId } = req.params;
+  const adminId = req.user.id;
   try {
-    const isAdmin = await CircleMember.findOne({ where: { circleId, userId, role: 'Admin' } });
+    const isAdmin = await CircleMember.findOne({ where: { circleId, userId: adminId, role: 'Admin' } });
     if (!isAdmin) {
       console.log('Only Admin can approve requests');
       return res.status(403).json({ message: 'Only Admin can approve requests' });
     }
-    const member = await CircleMember.findOne({ where: { circleId, userId } });
+    const member = await CircleMember.findOne({ where: { circleId, userId },
+    include: [{ model: Circle, attributes: ['circle_name'] }]
+    });
     if (!member) {
       console.log('User not found in circle');
       return res.status(404).json({ message: 'User not found in circle' });
     }
     member.status = 'Approved';
     await member.save();
+
+    await Notification.create({
+      id: uuidv4(),
+      senderId: req.user.id,
+      receiverId: userId,
+      type: 'Circle Join Request Approved',
+      message: `Your request to join the circle ${member.Circle.circle_name} has been approved.`
+    })
 
     res.status(200).json({ message: 'Member approved' });
   } catch (err: any) {
@@ -111,6 +160,14 @@ router.post('/add_member/:circleId/:userId', authentication, async (req: any, re
       role: 'Member',
       status: 'Approved'
     });
+
+    await Notification.create({
+      id: uuidv4(),
+      senderId: adminId,
+      receiverId: memberId,
+      type: 'add_member',
+      message: 'You have been added to new circle'
+    })
 
     res.status(200).json({ message: 'User added to circle' });
   } catch (err: any) {

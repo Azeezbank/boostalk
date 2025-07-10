@@ -948,7 +948,7 @@
  *               - circle_name
  *               - description
  *             properties:
- *               profile:
+ *               profile_Pic:
  *                 type: string
  *                 format: binary
  *                 description: Optional circle profile picture

@@ -8,7 +8,8 @@ import User from '../../models/user.model';
  * /:
  *   get:
  *     summary: Retrieve all users
- *     tags: [Users]
+ *     tags: 
+ *       - Users
  *     responses:
  *       200:
  *         description: A list of users
