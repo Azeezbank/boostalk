@@ -58,7 +58,7 @@ json
   "messageId": "string"
 }
 
-📥 Events You Receive
+## 📥 Events You Receive
 1. private_message
 json
 {

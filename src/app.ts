@@ -16,6 +16,7 @@ import { Server } from 'socket.io';
 import messages from './routes/messages/Messages';
 import profile from '@/routes/Profile/Profile';
 import Circle from '@/routes/Circle/Circle';
+import notification from '@/routes/Notification/Notification';
 
 
 const app = express();
@@ -44,7 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 
 //Get all Uers
-app.use("/get/all/users", users);
+app.use("/api/get/all/users", users);
 
 // Route for posts
 app.use('/api/post', post);
@@ -68,6 +69,9 @@ initializeSocket(io);
 app.use('/api/profile', profile);
 
 //Circle section
-app.use('/api/circle', Circle)
+app.use('/api/circle', Circle);
+
+//Handle notification
+app.use('/api/notification', notification);
 
 export { app, server };

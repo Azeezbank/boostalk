@@ -1233,7 +1233,7 @@
 //User
 /**
  * @swagger
- * /:
+ * /api/get/all/users/:
  *   get:
  *     summary: Retrieve all users
  *     tags: 
@@ -1270,4 +1270,101 @@
  *                 message:
  *                   type: string
  *                   example: Failed to select users
+ */
+
+//notification
+/**
+ * @swagger
+ * /api/notification/:
+ *   get:
+ *     summary: Get all notifications for the authenticated user
+ *     tags:
+ *       - Notifications
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Notifications retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 notifications:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Notification'
+ *       404:
+ *         description: No notifications found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No notifications found.
+ *       500:
+ *         description: Failed to fetch notifications
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to fetch notifications
+ */
+
+/**
+ * @swagger
+ * /api/notification/admin:
+ *   get:
+ *     summary: Get notifications for an authenticated admin
+ *     tags:
+ *       - Notifications
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Admin notifications retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 notifications:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Notification'
+ *       403:
+ *         description: User is not authorized (not an admin)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: You are not authorized to view notifications.
+ *       404:
+ *         description: No notifications found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No notifications found.
+ *       500:
+ *         description: Failed to fetch notifications
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to fetch notifications
  */
