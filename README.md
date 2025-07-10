@@ -2,19 +2,11 @@
 
 To install dependencies:
 
-```bash
-bun install
-```
-
 To run:
 
 ```bash
 npm run dev
 ```
-
-# Boostalk-Backend
-
-This is auth route for registring user
 
 
 # 🧠 Socket.IO Messaging API
@@ -25,7 +17,7 @@ This is auth route for registring user
 
 ## 🔌 Events You Emit
 
-### 1. `register`
+1. `register`
 Registers a user’s socket.
 
 **Payload:**
@@ -33,6 +25,7 @@ Registers a user’s socket.
 {
   "userId": "string"
 }
+
 2. private_message
 Send a private message.
 
