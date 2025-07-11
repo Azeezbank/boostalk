@@ -779,12 +779,59 @@
 //Messages
 /**
  * @swagger
+ * /api/messages/chat/partners:
+ *   get:
+ *     summary: Get chat partners and last messages
+ *     description: |
+ *       Retrieves a list of users the authenticated user has chatted with,
+ *       including the most recent message, time of message, username, and profile picture.
+ *     tags:
+ *       - Chat
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved chat partners
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   partnerId:
+ *                     type: string
+ *                     format: uuid
+ *                     description: ID of the chat partner
+ *                   username:
+ *                     type: string
+ *                     description: Username of the chat partner
+ *                   profilePic:
+ *                     type: string
+ *                     format: uri
+ *                     nullable: true
+ *                     description: Profile picture URL of the chat partner
+ *                   lastMessage:
+ *                     type: string
+ *                     description: Content of the last message
+ *                   time:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Time the last message was sent
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
  * /api/messages/{userId}/{chatPartnerId}:
  *   get:
  *     summary: Get all messages between two users
  *     description: Retrieve all messages exchanged between the authenticated user and the chat partner, ordered by timestamp.
  *     tags:
- *       - Messages
+ *       [Chat]
  *     parameters:
  *       - in: path
  *         name: userId
