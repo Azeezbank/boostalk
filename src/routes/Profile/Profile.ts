@@ -65,7 +65,7 @@ router.get('/', authentication, async (req: any, res: any) => {
     attributes: ['Username', 'Phone', 'Email'],
 include: [{
     model: Profile,
-    attributes: ['profilePicUrl', 'coverPicUr']
+    attributes: ['profilePicUrl', 'coverPicUrl']
 }]})
 res.status(200).json(user)
     } catch (err: any) {

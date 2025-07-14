@@ -1,4 +1,5 @@
 import database from '../config/database';
+import User from './user.model';
 import { DataTypes, Model } from 'sequelize';
 
 export class Profile extends Model {
@@ -13,7 +14,11 @@ Profile.init({
     },
     userId: {
         type: DataTypes.UUID,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id'
+        }
     },
     profilePicUrl: {
         type: DataTypes.STRING,
