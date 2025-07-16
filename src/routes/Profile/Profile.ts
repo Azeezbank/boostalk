@@ -8,6 +8,7 @@ import authentication from '@/middlewares/midleware';
 
 const router = express.Router();
 
+//Updated profile
 router.patch('/:id', authentication, upload.fields([
     {name: 'profilePic', maxCount: 1},
     {name: 'coverPic', maxCount: 1}
@@ -65,7 +66,7 @@ router.get('/', authentication, async (req: any, res: any) => {
     attributes: ['Username', 'Phone', 'Email'],
 include: [{
     model: Profile,
-    attributes: ['profilePicUrl', 'coverPicUrl']
+    attributes: ['profilePicUrl', 'coverPicUrl', 'bio']
 }]})
 res.status(200).json(user)
     } catch (err: any) {

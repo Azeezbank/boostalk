@@ -969,6 +969,8 @@
  *                       type: string
  *                     coverPicUr:
  *                       type: string
+ *                     bio:
+ *                       type: string
  *       500:
  *         description: Failed to select user profile
  */
@@ -1291,12 +1293,10 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
+ *               type: obje]ct
  *               properties:
  *                 user:
  *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
  *       404:
  *         description: No users found
  *         content:
