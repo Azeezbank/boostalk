@@ -48,7 +48,8 @@ router.patch('/:id', authentication, upload.fields([
             } else {
                 await profile.update({
                     profilePicUrl: profilePicUrl || profile.profilePicUrl,
-                    coverPicUrl: coverPicUrl || profile.coverPicUrl
+                    coverPicUrl: coverPicUrl || profile.coverPicUrl,
+                    bio: bio || profile.bio
                 })
             }
             res.status(200).json({ message: 'User Profile Updated Successfully'})
