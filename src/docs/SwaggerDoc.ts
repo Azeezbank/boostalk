@@ -1277,7 +1277,54 @@
  *       500:
  *         description: Failed to fetch pending requests
  */
-
+/**
+ * @swagger
+ * /my_circle:
+ *   get:
+ *     summary: Get the list of user circles
+ *     description: Retrieves all circles the authenticated user is a member of, including circle name, description, and profile picture.
+ *     tags:
+ *       - Circles
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of user circles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "34d5f2ab-1234-4567-8abc-98765efgh321"
+ *                   role:
+ *                     type: string
+ *                     example: "admin"
+ *                   status:
+ *                     type: string
+ *                     example: "active"
+ *                   Circle:
+ *                     type: object
+ *                     properties:
+ *                       profile_Pics:
+ *                         type: string
+ *                         example: "https://res.cloudinary.com/your-cloud/image/upload/v123/profile.jpg"
+ *                       circle_name:
+ *                         type: string
+ *                         example: "Tech Enthusiasts"
+ *                       description:
+ *                         type: string
+ *                         example: "A circle for sharing tech trends and opportunities."
+ *       401:
+ *         description: Unauthorized - Authentication required
+ *       404:
+ *         description: User not found in any circle
+ *       500:
+ *         description: Internal server error
+ */
 
 //User
 /**
