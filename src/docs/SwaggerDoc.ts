@@ -1284,7 +1284,7 @@
  *     summary: Get the list of user circles
  *     description: Retrieves all circles the authenticated user is a member of, including circle name, description, and profile picture.
  *     tags:
- *       - Circles
+ *       [Circles]
  *     security:
  *       - bearerAuth: []
  *     responses:
