@@ -1,5 +1,7 @@
 //Likes table model goes her
 import { Model, DataTypes }  from 'sequelize';
+import User from './user.model';
+import Post from './Post.model';
 import database from '@/config/database';
 
 
@@ -14,11 +16,19 @@ Likes.init(
         },
         userId: {
             type: DataTypes.UUID,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: User,
+                key: 'id'
+            }
         },
         postId: {
             type: DataTypes.UUID,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: Post,
+                key: 'id'
+            }
         }
     },
     {

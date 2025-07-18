@@ -6,6 +6,7 @@ import authentication from '../../middlewares/midleware';
 import { v4 as uuidv4 } from 'uuid';
 import follow from '@/models/Follow.model';
 import upload from '@/docs/cloudinary.upload';
+import postIncludes from '@/utils/postIncludes';
 
 const router = express.Router();
 
@@ -44,6 +45,7 @@ router.post('/create', authentication, upload.single('image'),  async (req: any,
 router.get('/public/feed', authentication, async (req: any, res: any) => {
     try {
         const posts = await Post.findAll({
+            include: postIncludes,
             order: [['createdAt', 'DESC']]
         });
 
@@ -73,7 +75,7 @@ router.get('/followers', authentication, async (req: any, res: any) => {
 
         // fetch post from them
         const posts = await Post.findAll({ where: {userId: followingIds}, 
-            include: [{model: User, attributes: ['id', 'Username']}],
+            include: postIncludes,
             order: [['createdAt', 'DESC']]
         });
         
@@ -95,10 +97,7 @@ router.get('/my/personal/feed', authentication, async (req: any, res: any) => {
         }
 
         const posts = await Post.findAll({ where: { userId },
-            include: [{
-                model: User,
-                attributes: ['id', 'Username']
-            }],
+            include: postIncludes,
             order: [['createdAt', 'DESC']]
         });
 
@@ -120,10 +119,7 @@ router.get('/:userId/feed', authentication, async (req: any, res: any) => {
         }
 
         const posts = await Post.findAll({ where: { userId },
-            include: [{
-                model: User,
-                attributes: ['id', 'Username']
-            }],
+            include: postIncludes,
             order: [['createdAt', 'DESC']]
          })
 

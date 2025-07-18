@@ -8,7 +8,7 @@ import Post from '@/models/Post.model';
 import User from '@/models/user.model';
 import { Op } from 'sequelize';
 import Notification from '@/models/Notification.model';
-import { idText } from 'typescript';
+import postIncludes from '@/utils/postIncludes';
 const router = express.Router();
 
 //Create circle
@@ -214,12 +214,7 @@ router.get('/posts/:circleId', authentication, async (req: any, res: any) => {
           [Op.in]: memberIds
         }
       },
-      include: [
-        {
-          model: User,
-          attributes: ['id', 'Username', 'Email']
-        }
-      ],
+      include: postIncludes,
       order: [['createdAt', 'DESC']]
     });
 

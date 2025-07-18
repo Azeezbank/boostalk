@@ -1,8 +1,9 @@
-import express  from "express";
+import express from "express";
 import authentication from "@/middlewares/midleware";
 import Follow from '@/models/Follow.model';
-import { v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import User from "@/models/user.model";
+import Notification from '@/models/Notification.model';
 const router = express.Router();
 
 //follow and unfollowing logic
@@ -12,7 +13,7 @@ router.post('/:followingId', authentication, async (req: any, res: any) => {
     try {
         if (followerId === followingId) {
             console.log('Error, You cannot follow yourself');
-            return res.status(400).json({message: 'Error, You cannot follow yourself'});
+            return res.status(400).json({ message: 'Error, You cannot follow yourself' });
         }
 
         const existingFollow = await Follow.findOne({ where: { followerId, followingId } });
@@ -20,17 +21,27 @@ router.post('/:followingId', authentication, async (req: any, res: any) => {
         if (existingFollow) {
             // Unfollow
             await existingFollow.destroy();
-            return res.json({ message: 'Unfollowed', following: false });
+            return res.status(200).json({ message: 'Unfollowed', following: false });
         } else {
             // Follow
             const id = uuidv4();
             await Follow.create({ id, followerId, followingId });
+
+            // Create a notification for the followed user
+            await Notification.create({
+                id: uuidv4(),
+                senderId: followerId,
+                receiverId: followingId,
+                type: 'followed',
+                message: `You have been followed by ${followerId}`
+            });
+
             return res.status(200).json({ message: 'Followed', following: true });
         }
 
     } catch (err: any) {
         console.error('Action Failed', err.message)
-        return res.status(500).json({message: 'Action Failed'});
+        return res.status(500).json({ message: 'Action Failed' });
     }
 });
 
@@ -39,18 +50,21 @@ router.get('/followers/:userId', authentication, async (req: any, res: any) => {
     const userId = req.params.userId;
     try {
         const user = await User.findByPk(userId, {
-            include: [{model: User, as: 'Followers', attributes: ['id', 'Username']}],
+            include: [{
+                model: User, as: 'Followers', attributes: ['id', 'Username'],
+                through: { attributes: [] }
+            }],
         });
 
         if (!user) {
             console.log('User Not Found for follow');
-            return res.status(404).json({message: 'User Not Found'});
+            return res.status(404).json({ message: 'User Not Found' });
         }
-        
-        res.status(200).json({followers: user.Followers});
+
+        res.status(200).json({ followers: user.Followers });
     } catch (err: any) {
         console.error('Failed to fetch followers', err.message);
-        return res.status(500).json({message: 'Failed to fetch followers'});
+        return res.status(500).json({ message: 'Failed to fetch followers' });
     }
 });
 
@@ -59,18 +73,21 @@ router.get('/following/:userId', authentication, async (req: any, res: any) => {
     const userId = req.params.userId;
     try {
         const user = await User.findByPk(userId, {
-            include: [{model: User, as: 'following', attributes: ['id', 'Username']}],
+            include: [{
+                model: User, as: 'following', attributes: ['id', 'Username'],
+                through: { attributes: [] }
+            }],
         });
 
         if (!user) {
             console.log('User Not Found for follow');
-            return res.status(404).json({message: 'User Not Found'});
+            return res.status(404).json({ message: 'User Not Found' });
         }
-        
-        res.status(200).json({following: user.following});
+
+        res.status(200).json({ following: user.following });
     } catch (err: any) {
         console.error('Failed to fetch following users', err.message);
-        return res.status(500).json({message: 'Failed to fetch following users'});
+        return res.status(500).json({ message: 'Failed to fetch following users' });
     }
 });
 
