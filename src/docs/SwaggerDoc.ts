@@ -1175,7 +1175,7 @@
 /**
  * @swagger
  * /api/circle/posts/{circleId}:
- *   post:
+ *   get:
  *     summary: Get posts from all approved members of a circle
  *     description: Only approved members of a circle can view posts created by other members in the same circle.
  *     tags:

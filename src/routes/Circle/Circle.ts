@@ -178,7 +178,7 @@ router.post('/add_member/:circleId/:userId', authentication, async (req: any, re
 
 
 // Get all circle member's post
-router.post('/posts/:circleId', authentication, async (req: any, res: any) => {
+router.get('/posts/:circleId', authentication, async (req: any, res: any) => {
   const circleId = req.params.circleId;
   const userId = req.user.id;
 
