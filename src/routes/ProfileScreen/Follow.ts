@@ -41,8 +41,13 @@ router.get('/followers/:userId', authentication, async (req: any, res: any) => {
         const user = await User.findByPk(userId, {
             include: [{model: User, as: 'Followers', attributes: ['id', 'Username']}],
         });
+
+        if (!user) {
+            console.log('User Not Found for follow');
+            return res.status(404).json({message: 'User Not Found'});
+        }
         
-        res.status(200).json({followers: user?.followers});
+        res.status(200).json({followers: user.Followers});
     } catch (err: any) {
         console.error('Failed to fetch followers', err.message);
         return res.status(500).json({message: 'Failed to fetch followers'});
