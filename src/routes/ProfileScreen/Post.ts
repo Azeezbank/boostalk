@@ -85,4 +85,31 @@ router.get('/followers', authentication, async (req: any, res: any) => {
 });
 
 
+// Get all posts for a specific user
+router.get('/:userId/feed', authentication, async (req: any, res: any) => {
+    const userId = req.params.userId;
+    try {
+        const user = await User.findOne({ where: {id: userId}});
+        if (!user) {
+            console.log('User Not Found')
+            return res.status(404).json({message: 'User Not Found'});
+        }
+
+        const posts = await Post.findAll({ where: { userId },
+            include: [{
+                model: User,
+                attributes: ['id', 'Username']
+            }],
+            order: [['createdAt', 'DESC']]
+         })
+
+         res.status(200).json(posts)
+    } catch (err: any) {
+        console.error('Failed to select individual post', err.message);
+        return res.status(500).json({message: 'Failed to select individual post'})
+    }
+});
+
+
+
 export default router;

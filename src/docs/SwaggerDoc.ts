@@ -508,6 +508,86 @@
  *       500:
  *         description: Failed to select posts
  */
+/**
+ * @swagger
+ * /api/post/{userId}/feed:
+ *   get:
+ *     summary: Get all posts for a specific user
+ *     tags:
+ *       - Posts
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the user whose posts to retrieve
+ *     responses:
+ *       200:
+ *         description: A list of posts by the specified user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "1a2b3c"
+ *                   title:
+ *                     type: string
+ *                     example: "My First Post"
+ *                   content:
+ *                     type: string
+ *                     example: "This is the content of the post..."
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-07-18T12:00:00Z"
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-07-18T13:00:00Z"
+ *                   userId:
+ *                     type: string
+ *                     example: "123"
+ *                   images:
+ *                     type: string
+ *                     example: "https://example.com/image.jpg"
+ *                   User:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "123"
+ *                       Username:
+ *                         type: string
+ *                         example: "john_doe"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User Not Found
+ *       500:
+ *         description: Failed to fetch user posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to select individual post
+ */
+
 
 /**
  * @swagger
