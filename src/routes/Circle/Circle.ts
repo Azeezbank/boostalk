@@ -185,7 +185,7 @@ router.get('/my_circle', authentication, async (req: any, res: any) => {
     attributes: ['id', 'role', 'status'],
     include: [{
       model: Circle,
-      attributes: [ 'profile_Pics', 'circle_name', 'description' ]
+      attributes: [ 'id', 'profile_Pics', 'circle_name', 'description' ]
     }],
     order: [['createdAt', 'DESC']]
     });
