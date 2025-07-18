@@ -36,7 +36,7 @@ router.post('/:followingId', authentication, async (req: any, res: any) => {
 
 //Get the followers
 router.get('/followers/:userId', authentication, async (req: any, res: any) => {
-    const userId = req.user.id;
+    const userId = req.params.userId;
     try {
         const user = await User.findByPk(userId, {
             include: [{model: User, as: 'Followers', attributes: ['id', 'Username']}],
@@ -56,7 +56,7 @@ router.get('/followers/:userId', authentication, async (req: any, res: any) => {
 
 //Get the number of following users
 router.get('/following/:userId', authentication, async (req: any, res: any) => {
-    const userId = req.user.id;
+    const userId = req.params.userId;
     try {
         const user = await User.findByPk(userId, {
             include: [{model: User, as: 'following', attributes: ['id', 'Username']}],
