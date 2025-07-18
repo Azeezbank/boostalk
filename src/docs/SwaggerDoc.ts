@@ -490,12 +490,13 @@
  * /api/post/public/feed:
  *   get:
  *     summary: Get all posts in the public feed
- *     tags: [Posts]
+ *     tags:
+ *       [Posts]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of public posts
+ *         description: A list of all posts in the public feed
  *         content:
  *           application/json:
  *             schema:
@@ -505,16 +506,123 @@
  *                   type: array
  *                   items:
  *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "post123"
+ *                       title:
+ *                         type: string
+ *                         example: "Public Post Title"
+ *                       content:
+ *                         type: string
+ *                         example: "This is a public post available to all users."
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-07-18T12:00:00Z"
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-07-18T13:00:00Z"
+ *                       userId:
+ *                         type: string
+ *                         example: "user456"
+ *                       image:
+ *                         type: string
+ *                         example: "https://example.com/image.jpg"
  *       500:
- *         description: Failed to select posts
+ *         description: Failed to fetch public posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failes to select posts
  */
+
+/**
+ * @swagger
+ * /api/post/my/personal/feed:
+ *   get:
+ *     summary: Get posts created by the authenticated user
+ *     tags:
+ *       [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of posts by the logged-in user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "1a2b3c"
+ *                   title:
+ *                     type: string
+ *                     example: "My Personal Post"
+ *                   content:
+ *                     type: string
+ *                     example: "This is my personal post content..."
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-07-18T12:00:00Z"
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-07-18T13:00:00Z"
+ *                   userId:
+ *                     type: string
+ *                     example: "abc123"
+ *                   image:
+ *                     type: string
+ *                     example: https://image.example.com/my-post.jpg
+ *                   User:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "abc123"
+ *                       Username:
+ *                         type: string
+ *                         example: "john_doe"
+ *       404:
+ *         description: Authenticated user not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User Not Found
+ *       500:
+ *         description: Server error while retrieving posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to select individual post
+ */
+
+
 /**
  * @swagger
  * /api/post/{userId}/feed:
  *   get:
  *     summary: Get all posts for a specific user
  *     tags:
- *       - Posts
+ *       [Posts]
  *     security:
  *       - bearerAuth: []
  *     parameters:
