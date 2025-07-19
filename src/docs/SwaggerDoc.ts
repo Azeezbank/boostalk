@@ -4,6 +4,8 @@
  * /api/auth/register:
  *   post:
  *     summary: Register a new user
+ *     security:
+ *       - bearerAuth: []
  *     tags:
  *       - Auth
  *     requestBody:
@@ -74,6 +76,8 @@
  * /api/auth/verify:
  *   post:
  *     summary: Verify a user's email using a verification code
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -109,6 +113,8 @@
  * /api/auth/login:
  *   post:
  *     summary: Sign in user
+ *     security:
+ *       - bearerAuth: []
  *     tags:
  *       [Auth]
  *     requestBody:
@@ -193,6 +199,8 @@
  * /api/auth/forgot/password:
  *   post:
  *     summary: Send a password reset link to the user's email
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -237,6 +245,8 @@
  * /api/auth/reset/password:
  *   post:
  *     summary: Reset a user's password using a token
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Auth]
  *     parameters:
  *       - in: query
@@ -1021,6 +1031,8 @@
  *   get:
  *     summary: Get all messages between two users
  *     description: Retrieve all messages exchanged between the authenticated user and the chat partner, ordered by timestamp.
+ *     security:
+ *       - bearerAuth: []
  *     tags:
  *       [Chat]
  *     parameters:
@@ -1523,6 +1535,8 @@
  * /api/get/all/users/:
  *   get:
  *     summary: Retrieve all users
+ *     security:
+ *       - bearerAuth: []
  *     tags: 
  *       - Users
  *     responses:
