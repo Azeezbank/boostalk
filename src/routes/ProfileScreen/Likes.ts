@@ -37,11 +37,11 @@ router.post('/:postId', authentication, async (req: any, res: any) => {
                 });
             }
 
-            return res.status(200).json({ message: 'Post liked successfully' });
+            return res.status(200).json({ message: 'Post liked successfully', liked: true });
         } else {
             // If it exists, destroy it to unlike
             await Likes.destroy({ where: { userId, postId } });
-            return res.status(200).json({ message: 'Post unliked successfully' });
+            return res.status(200).json({ message: 'Post unliked successfully', liked: false });
         }
     } catch (err: any) {
         console.error('Failed to like or unlike', err.message);
