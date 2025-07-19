@@ -177,6 +177,31 @@ router.post('/add_member/:circleId/:userId', authentication, async (req: any, re
 });
 
 
+//Get the list of user circles
+router.get('/my_circle', authentication, async (req: any, res: any) => {
+  const userId = req.user.id;
+  try {
+    const circles = await CircleMember.findAll({ where: { userId},
+    attributes: ['id', 'role', 'status'],
+    include: [{
+      model: Circle,
+      attributes: [ 'id', 'profile_Pics', 'circle_name', 'description' ]
+    }],
+    order: [['createdAt', 'DESC']]
+    });
+    if (!circles || circles.length === 0) {
+      console.log('No User Found in the circle');
+      return res.status(404).json({ message: 'User Not Found'});
+    }
+
+    res.status(200).json(circles);
+  } catch (err: any) {
+    console.error('Failed to select circles', err.message);
+    return res.status(500).json({ message: 'Failed to select circles'});
+  }
+});
+
+
 // Get all circle member's post
 router.get('/posts/:circleId', authentication, async (req: any, res: any) => {
   const circleId = req.params.circleId;
@@ -266,28 +291,5 @@ router.get('/pending/requests/:circleId', authentication, async (req: any, res: 
   }
 });
 
-//Get the list of user circles
-router.get('/my_circle', authentication, async (req: any, res: any) => {
-  const userId = req.user.id;
-  try {
-    const circles = await CircleMember.findAll({ where: { userId},
-    attributes: ['id', 'role', 'status'],
-    include: [{
-      model: Circle,
-      attributes: [ 'profile_Pics', 'circle_name', 'description' ]
-    }],
-    order: [['createdAt', 'DESC']]
-    });
-    if (!circles || circles.length === 0) {
-      console.log('No User Found in the circle');
-      return res.status(404).json({ message: 'User Not Found'});
-    }
-
-    res.status(200).json(circles);
-  } catch (err: any) {
-    console.error('Failed to select circles', err.message);
-    return res.status(500).json({ message: 'Failed to select circles'});
-  }
-})
 
 export default router;
