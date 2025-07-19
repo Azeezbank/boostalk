@@ -749,6 +749,9 @@
  *                 message:
  *                   type: string
  *                   example: Post liked successfully
+ *                 liked:
+ *                   type: boolean
+ *                   example: true
  *       500:
  *         description: Server error
  *         content:
